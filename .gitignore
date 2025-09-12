@@ -1,0 +1,46 @@
+# -------------------------
+# Node.js dependencies
+# -------------------------
+backend/node_modules/
+frontend/node_modules/
+
+# -------------------------
+# Logs
+# -------------------------
+logs
+*.log
+logs/*
+*.pid
+*.seed
+*.pid.lock
+
+# -------------------------
+# Build output
+# -------------------------
+backend/dist/
+backend/build/
+frontend/dist/
+frontend/build/
+
+# -------------------------
+# Environment files
+# -------------------------
+backend/.env
+frontend/.env
+.env
+.env.local
+.env.*.local
+
+# -------------------------
+# IDE / Editor settings
+# -------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# -------------------------
+# System files
+# -------------------------
+.DS_Store
+Thumbs.db
