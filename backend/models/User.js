@@ -3,9 +3,13 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
+
+    // Either email OR phone can exist
+    email: { type: String, unique: true, sparse: true },
+    phone: { type: String, unique: true, sparse: true },
+
     password: { type: String, required: true },
-    isAdmin: { type: Boolean, default: false }, // 🔑 new field
+    isAdmin: { type: Boolean, default: false }, // Admin flag
   },
   { timestamps: true }
 );

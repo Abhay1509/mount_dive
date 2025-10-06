@@ -4,14 +4,20 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 
 import authRoutes from "./routes/authRoutes.js";
-import trekRoutes from "./routes/trekRoutes.js";
-import bookingRoutes from "./routes/bookingRoutes.js";
+// import trekRoutes from "./routes/trekRoutes.js";
+// import bookingRoutes from "./routes/bookingRoutes.js";
 
 dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5173",   // frontend URL
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
+
+
 app.use(express.json());
 
 // DB Connection
@@ -19,8 +25,6 @@ connectDB();
 
 // Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/treks", trekRoutes);
-app.use("/api/bookings", bookingRoutes);
 
 // Start server
 const PORT = process.env.PORT || 5000;

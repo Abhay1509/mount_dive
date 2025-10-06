@@ -1,0 +1,36 @@
+import React from "react";
+
+const OurStory = () => {
+  return (
+    <section id="story" className="py-20 px-6 md:px-16 bg-white">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        {/* Left Image */}
+        <div className="relative">
+          <img
+            src="https://images.pexels.com/photos/414171/pexels-photo-414171.jpeg"
+            alt="Our Story"
+            className="rounded-2xl shadow-lg w-full h-[400px] object-cover"
+          />
+        </div>
+
+        {/* Right Content */}
+        <div>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            Our <span className="text-blue-500">Story</span>
+          </h2>
+          <p className="text-gray-600 leading-relaxed mb-6">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip ex ea commodo consequat.
+          </p>
+          <button className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-full shadow-lg hover:bg-blue-600 transition">
+            Learn More
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default OurStory;
