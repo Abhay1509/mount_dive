@@ -21,6 +21,7 @@ const LoginForm = ({ contactMethod, onSuccess }) => {
   const handleSubmit = useCallback(
     async (e) => {
       e.preventDefault();
+
       const identifier =
         contactMethod === "email"
           ? formData.email.trim()
@@ -39,17 +40,30 @@ const LoginForm = ({ contactMethod, onSuccess }) => {
 
       try {
         setLoading(true);
-        const payload = { identifier, password: formData.password };
+
+        // Consistent payload with SignupForm
+        const payload =
+          contactMethod === "email"
+            ? { email: formData.email.trim(), password: formData.password }
+            : { phone: formData.phone.trim(), password: formData.password };
+
         const response = await axios.post(
           `${process.env.REACT_APP_API_URL}/api/auth/login`,
           payload
         );
-        localStorage.setItem("token", response.data.token);
-        setLoading(false);
-        onSuccess && onSuccess();
+
+        // Save token
+        if (response.data?.token) {
+          localStorage.setItem("token", response.data.token);
+        }
+
+        onSuccess?.();
       } catch (err) {
+        setError(
+          err.response?.data?.message || "Login failed. Please try again."
+        );
+      } finally {
         setLoading(false);
-        setError(err.response?.data?.message || "Invalid credentials");
       }
     },
     [formData, contactMethod, onSuccess]
@@ -57,13 +71,14 @@ const LoginForm = ({ contactMethod, onSuccess }) => {
 
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
+      {/* Email or Phone input */}
       {contactMethod === "email" ? (
         <input
           type="email"
           name="email"
           value={formData.email}
           onChange={handleChange}
-          placeholder="Email"
+          placeholder="Email address"
           className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
           required
         />
@@ -73,12 +88,13 @@ const LoginForm = ({ contactMethod, onSuccess }) => {
           name="phone"
           value={formData.phone}
           onChange={handleChange}
-          placeholder="Phone"
+          placeholder="Phone number"
           className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
           required
         />
       )}
 
+      {/* Password input */}
       <div className="relative">
         <input
           type={showPassword ? "text" : "password"}
@@ -102,11 +118,24 @@ const LoginForm = ({ contactMethod, onSuccess }) => {
 
       <button
         type="submit"
-        className="w-full bg-black text-white py-2 rounded-md hover:opacity-95 transition"
+        className={`w-full bg-black text-white py-2 rounded-md transition ${
+          loading ? "opacity-50 cursor-not-allowed" : "hover:opacity-95"
+        }`}
         disabled={loading}
       >
         {loading ? "Logging in..." : "Login"}
       </button>
+
+      {/* Optional UX improvement */}
+      <div className="text-right">
+        <button
+          type="button"
+          className="text-sm text-blue-600 hover:underline"
+          onClick={() => alert("Forgot password flow coming soon!")}
+        >
+          Forgot password?
+        </button>
+      </div>
     </form>
   );
 };

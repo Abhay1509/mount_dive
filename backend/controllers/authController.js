@@ -12,20 +12,25 @@ export const signup = async (req, res) => {
 
     // Check if user already exists
     const existingUser = await User.findOne(query);
-    if (existingUser)
+    if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
+    }
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create new user
-    const user = await User.create({
+    // Build user object dynamically
+    const userData = {
       name,
-      email: email || null,
-      phone: phone || null,
       password: hashedPassword,
       isAdmin: isAdmin || false,
-    });
+    };
+
+    if (email) userData.email = email; // only set if email provided
+    if (phone) userData.phone = phone; // only set if phone provided
+
+    // Create new user
+    const user = await User.create(userData);
 
     // Respond with user info + JWT
     res.status(201).json({
@@ -44,22 +49,25 @@ export const signup = async (req, res) => {
 // Login with email OR phone
 export const login = async (req, res) => {
   try {
-    const { identifier, password } = req.body;
-    // 'identifier' can be email or phone
+    const { email, phone, password } = req.body;
 
-    // Find user by email or phone
-    const user = await User.findOne({
-      $or: [{ email: identifier }, { phone: identifier }],
-    });
+    // Pick identifier based on what's provided
+    const query = email ? { email } : phone ? { phone } : null;
 
+    if (!query) {
+      return res.status(400).json({ message: "Email or phone is required" });
+    }
+
+    // Find user
+    const user = await User.findOne(query);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Compare password
+    // Check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)
       return res.status(400).json({ message: "Invalid credentials" });
 
-    // Return user info + JWT
+    // Return user info + token
     res.json({
       _id: user._id,
       name: user.name,

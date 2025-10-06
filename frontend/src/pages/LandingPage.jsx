@@ -11,6 +11,7 @@ import TrekServices from "./TrekServices";
 import OurStory from "./OurStory";
 import LandingPageFooter from "./LandingPageFooter";
 import SideNav from "./SideNav";
+import useHeroCarousel from "../hooks/useHeroCarousel";
 
 // Lazy-loaded sections
 const Team = React.lazy(() => import("./Team"));
@@ -26,23 +27,11 @@ const backgroundImages = [
 ];
 
 const LandingPage = () => {
-  const [currentImage, setCurrentImage] = useState(0);
+  const { currentImage, setCurrentImage } = useHeroCarousel(
+    backgroundImages,
+    5000
+  );
   const [activeSection, setActiveSection] = useState("home");
-
-  // Auto-slide carousel
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImage((prev) => (prev + 1) % backgroundImages.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Preload next image to avoid flicker
-  useEffect(() => {
-    const nextImage = (currentImage + 1) % backgroundImages.length;
-    const img = new Image();
-    img.src = backgroundImages[nextImage];
-  }, [currentImage]);
 
   // Mouse parallax with throttling
   const mouseX = useSpring(0, { stiffness: 50, damping: 20 });
@@ -92,7 +81,8 @@ const LandingPage = () => {
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 

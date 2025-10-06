@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { validateSignupForm } from "../../helpers/validation";
 import axios from "axios";
 
@@ -10,22 +10,26 @@ const SignupForm = ({ contactMethod, onSuccess }) => {
     password: "",
     confirmPassword: "",
   });
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const identifier = useMemo(
+    () =>
+      contactMethod === "email" ? formData.email.trim() : formData.phone.trim(),
+    [contactMethod, formData.email, formData.phone]
+  );
 
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    setError("");
+    setErrors((prev) => ({ ...prev, [name]: "" })); // Clear only that field’s error
   }, []);
 
   const handleSubmit = useCallback(
     async (e) => {
       e.preventDefault();
-      const { fullName, email, phone, password, confirmPassword } = formData;
-      const identifier =
-        contactMethod === "email" ? email.trim() : phone.trim();
+      const { fullName, password, confirmPassword } = formData;
 
       const validationError = validateSignupForm(
         fullName.trim(),
@@ -36,41 +40,51 @@ const SignupForm = ({ contactMethod, onSuccess }) => {
       );
 
       if (validationError) {
-        setError(validationError);
+        setErrors({ general: validationError });
         return;
       }
 
       try {
         setLoading(true);
         const payload = { name: fullName.trim(), password };
-        if (contactMethod === "email") payload.email = email.trim();
-        else payload.phone = phone.trim();
+        if (contactMethod === "email" && formData.email.trim()) {
+          payload.email = formData.email.trim();
+        }
+        if (contactMethod === "phone" && formData.phone.trim()) {
+          payload.phone = formData.phone.trim();
+        }
 
-        const response = await axios.post(
-          `${process.env.REACT_APP_API_URL}/api/auth/signup`,
+        await axios.post(
+          `${import.meta.env.VITE_API_URL}/api/auth/signup`,
           payload
         );
-        setLoading(false);
-        onSuccess && onSuccess();
+        onSuccess?.();
       } catch (err) {
+        setErrors({
+          general: err.response?.data?.message || "Signup failed. Try again.",
+        });
+      } finally {
         setLoading(false);
-        setError(err.response?.data?.message || "Signup failed. Try again.");
       }
     },
-    [formData, contactMethod, onSuccess]
+    [formData, contactMethod, identifier, onSuccess]
   );
 
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
+      {/* Full Name */}
       <input
         type="text"
         name="fullName"
         value={formData.fullName}
         onChange={handleChange}
         placeholder="Full Name"
+        aria-label="Full Name"
         className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
         required
       />
+
+      {/* Email or Phone */}
       {contactMethod === "email" ? (
         <input
           type="email"
@@ -78,6 +92,7 @@ const SignupForm = ({ contactMethod, onSuccess }) => {
           value={formData.email}
           onChange={handleChange}
           placeholder="Email address"
+          aria-label="Email"
           className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
           required
         />
@@ -88,11 +103,13 @@ const SignupForm = ({ contactMethod, onSuccess }) => {
           value={formData.phone}
           onChange={handleChange}
           placeholder="Phone number"
+          aria-label="Phone"
           className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
           required
         />
       )}
 
+      {/* Password */}
       <div className="relative">
         <input
           type={showPassword ? "text" : "password"}
@@ -100,33 +117,41 @@ const SignupForm = ({ contactMethod, onSuccess }) => {
           value={formData.password}
           onChange={handleChange}
           placeholder="Password"
+          aria-label="Password"
           className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
           required
         />
         <button
           type="button"
           onClick={() => setShowPassword((s) => !s)}
+          aria-label={showPassword ? "Hide password" : "Show password"}
           className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
         >
-          {showPassword ? "Hide" : "Show"}
+          {showPassword ? "🙈" : "👁"}
         </button>
       </div>
 
+      {/* Confirm Password */}
       <input
         type="password"
         name="confirmPassword"
         value={formData.confirmPassword}
         onChange={handleChange}
         placeholder="Confirm Password"
+        aria-label="Confirm Password"
         className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
         required
       />
 
-      {error && <p className="text-red-500 text-sm">{error}</p>}
+      {/* Error Message */}
+      {errors.general && (
+        <p className="text-red-500 text-sm">{errors.general}</p>
+      )}
 
+      {/* Submit Button */}
       <button
         type="submit"
-        className="w-full bg-black text-white py-2 rounded-md hover:opacity-95 transition"
+        className="w-full bg-black text-white py-2 rounded-md hover:opacity-95 transition disabled:opacity-60"
         disabled={loading}
       >
         {loading ? "Signing up..." : "Sign up"}
