@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import LoginForm from "../components/auth/LoginForm";
 import SignupForm from "../components/auth/SignupForm";
+import { useAuth } from "../context/AuthContext";
 
 const AuthImageSlider = React.lazy(() =>
   import("../components/auth/AuthImageSlider")
@@ -13,6 +14,8 @@ const AuthPage = () => {
   const { mode } = useParams(); // "login" or "signup"
   const [contactMethod, setContactMethod] = useState("email");
   const [currentMode, setCurrentMode] = useState(mode); // Track mode for rendering
+
+  const { login } = useAuth();
 
   // ✅ Use correct asset paths (no /public prefix)
   const images = [
@@ -42,7 +45,7 @@ const AuthPage = () => {
     login: {
       title: "Login",
       component: LoginForm,
-      redirect: "/dashboard",
+      redirect: "/landing",
       linkText: "Don't have an account?",
       linkTo: "signup",
       linkLabel: "Sign up here",
@@ -142,7 +145,11 @@ const AuthPage = () => {
           >
             <FormComponent
               contactMethod={contactMethod}
-              onSuccess={() => navigate(current.redirect)}
+              onSuccess={(data) => {
+                // ✅ Save user session instantly
+                if (data?.token) login(data.token, data.user);
+                navigate(current.redirect);
+              }}
             />
 
             <p className="text-sm text-center text-gray-600 mt-4">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense } from "react";
+import React, { Suspense } from "react";
 import {
   motion,
   AnimatePresence,
@@ -10,8 +10,9 @@ import HeroNavbar from "./HeroNavbar";
 import TrekServices from "./TrekServices";
 import OurStory from "./OurStory";
 import LandingPageFooter from "./LandingPageFooter";
-import SideNav from "./SideNav";
 import useHeroCarousel from "../hooks/useHeroCarousel";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 // Lazy-loaded sections
 const Team = React.lazy(() => import("./Team"));
@@ -31,9 +32,11 @@ const LandingPage = () => {
     backgroundImages,
     5000
   );
-  const [activeSection, setActiveSection] = useState("home");
 
-  // Mouse parallax with throttling
+  const { user } = useAuth();           // ✅ hook inside component
+  const navigate = useNavigate();       // ✅ hook inside component
+
+  // Mouse parallax
   const mouseX = useSpring(0, { stiffness: 50, damping: 20 });
   const mouseYOffset = useSpring(0, { stiffness: 50, damping: 20 });
 
@@ -51,46 +54,8 @@ const LandingPage = () => {
   const yScroll = useTransform(scrollY, [0, 500], [0, 100]);
   const yMotion = useSpring(yScroll, { stiffness: 50, damping: 20 });
 
-  // Active section detection (throttled)
-  useEffect(() => {
-    const sections = [
-      "home",
-      "services",
-      "story",
-      "team",
-      "trips",
-      "gallery",
-      "footer",
-    ];
-    let ticking = false;
-
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          let current = "home";
-          sections.forEach((id) => {
-            const el = document.getElementById(id);
-            if (el && window.scrollY >= el.offsetTop - 200) {
-              current = id;
-            }
-          });
-          setActiveSection(current);
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   return (
     <div className="relative w-full" onMouseMove={handleMouseMove}>
-      {/* Side Numbered Slider Navigation */}
-      <SideNav activeSection={activeSection} />
-
       {/* Hero Section */}
       <section
         id="home"
@@ -156,6 +121,10 @@ const LandingPage = () => {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
               className="mt-6 px-8 py-3 bg-blue-500 text-white font-bold rounded-full shadow-lg hover:bg-blue-600 transition"
+              onClick={() => {
+                if (user) navigate("/book-trek"); // logged-in → booking page
+                else navigate("/auth/login");     // guest → login page
+              }}
             >
               Join us Now
             </motion.button>

@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { validateLoginForm } from "../../helpers/validation";
 import axios from "axios";
+import { useAuth } from "../../context/AuthContext";
 
 const LoginForm = ({ contactMethod, onSuccess }) => {
   const [formData, setFormData] = useState({
@@ -11,6 +12,7 @@ const LoginForm = ({ contactMethod, onSuccess }) => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const { login } = useAuth();
 
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
@@ -41,23 +43,20 @@ const LoginForm = ({ contactMethod, onSuccess }) => {
       try {
         setLoading(true);
 
-        // Consistent payload with SignupForm
         const payload =
           contactMethod === "email"
             ? { email: formData.email.trim(), password: formData.password }
             : { phone: formData.phone.trim(), password: formData.password };
 
         const response = await axios.post(
-          `${process.env.REACT_APP_API_URL}/api/auth/login`,
+          `${import.meta.env.VITE_API_URL}/api/auth/login`,
           payload
         );
 
-        // Save token
         if (response.data?.token) {
-          localStorage.setItem("token", response.data.token);
+          login(response.data.token, response.data.user || null);
         }
-
-        onSuccess?.();
+        onSuccess?.(response.data);
       } catch (err) {
         setError(
           err.response?.data?.message || "Login failed. Please try again."
@@ -71,7 +70,6 @@ const LoginForm = ({ contactMethod, onSuccess }) => {
 
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
-      {/* Email or Phone input */}
       {contactMethod === "email" ? (
         <input
           type="email"
@@ -94,7 +92,6 @@ const LoginForm = ({ contactMethod, onSuccess }) => {
         />
       )}
 
-      {/* Password input */}
       <div className="relative">
         <input
           type={showPassword ? "text" : "password"}
@@ -126,7 +123,6 @@ const LoginForm = ({ contactMethod, onSuccess }) => {
         {loading ? "Logging in..." : "Login"}
       </button>
 
-      {/* Optional UX improvement */}
       <div className="text-right">
         <button
           type="button"

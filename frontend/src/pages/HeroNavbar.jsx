@@ -1,8 +1,10 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const HeroNavbar = () => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   // Scroll to section smoothly
   const handleScroll = (id) => {
@@ -75,13 +77,22 @@ const HeroNavbar = () => {
         </button>
 
         {/* Single Auth Button */}
-        <button
-          onClick={() => navigate("/auth/signup")}
-          aria-label="Sign Up"
-          className="ml-4 px-6 py-2 bg-blue-500 rounded-full text-white hover:bg-blue-600 transition"
-        >
-          Sign Up
-        </button>
+
+        {user ? (
+          <button
+            onClick={logout}
+            className="ml-4 px-6 py-2 bg-blue-500 rounded-full text-white hover:bg-blue-600 transition"
+          >
+            Logout
+          </button>
+        ) : (
+          <button
+            onClick={() => navigate("/auth/signup")}
+            className="ml-4 px-6 py-2 bg-blue-500 rounded-full text-white hover:bg-blue-600 transition"
+          >
+            Sign Up
+          </button>
+        )}
       </div>
     </nav>
   );
