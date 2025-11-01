@@ -1,6 +1,7 @@
-import React, { useState, useCallback } from "react";
-import { validateLoginForm } from "../../helpers/validation";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+import { auth } from "../../firebase";
 import { useAuth } from "../../context/AuthContext";
 
 const LoginForm = ({ contactMethod, onSuccess }) => {
@@ -10,129 +11,184 @@ const LoginForm = ({ contactMethod, onSuccess }) => {
     password: "",
   });
   const [error, setError] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
 
-  const handleChange = useCallback((e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    setError("");
-  }, []);
-
-  const handleSubmit = useCallback(
-    async (e) => {
-      e.preventDefault();
-
-      const identifier =
-        contactMethod === "email"
-          ? formData.email.trim()
-          : formData.phone.trim();
-
-      const validationError = validateLoginForm(
-        identifier,
-        formData.password,
-        contactMethod
+  // ✅ Always initialize recaptcha when component mounts
+  useEffect(() => {
+    if (!window.recaptchaVerifier) {
+      window.recaptchaVerifier = new RecaptchaVerifier(
+        auth,
+        "recaptcha-container",
+        {
+          size: "invisible",
+        }
       );
 
-      if (validationError) {
-        setError(validationError);
-        return;
-      }
+      window.recaptchaVerifier.render();
+    }
+  }, []);
 
+  const handleChange = (e) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    setError("");
+  };
+
+  // ✅ Send OTP
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (contactMethod === "email") {
       try {
         setLoading(true);
-
-        const payload =
-          contactMethod === "email"
-            ? { email: formData.email.trim(), password: formData.password }
-            : { phone: formData.phone.trim(), password: formData.password };
-
-        const response = await axios.post(
+        const res = await axios.post(
           `${import.meta.env.VITE_API_URL}/api/auth/login`,
-          payload
+          {
+            email: formData.email,
+            password: formData.password,
+          }
         );
 
-        if (response.data?.token) {
-          login(response.data.token, response.data.user || null);
-        }
-        onSuccess?.(response.data);
+        login(res.data.token, res.data.user);
+        onSuccess?.(res.data);
       } catch (err) {
-        setError(
-          err.response?.data?.message || "Login failed. Please try again."
-        );
+        setError(err.response?.data?.message || "Login failed");
       } finally {
         setLoading(false);
       }
-    },
-    [formData, contactMethod, onSuccess]
-  );
+      return;
+    }
+
+    // ✅ Phone Login
+    try {
+      setLoading(true);
+      const appVerifier = window.recaptchaVerifier;
+      const confirmationResult = await signInWithPhoneNumber(
+        auth,
+        `+91${formData.phone}`,
+        appVerifier
+      );
+
+      window.confirmationResult = confirmationResult;
+      setOtpSent(true);
+    } catch (err) {
+      console.log(err);
+      setError("Failed to send OTP. Try again");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ Verify OTP
+  const verifyOtp = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      const result = await window.confirmationResult.confirm(otp);
+      const idToken = await result.user.getIdToken();
+
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/auth/firebase-login`, // ✅ same as signup
+        { token: idToken }
+      );
+
+      login(response.data.token, response.data.user);
+      onSuccess?.(response.data);
+    } catch (err) {
+      setError("Invalid OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <form className="space-y-4" onSubmit={handleSubmit}>
-      {contactMethod === "email" ? (
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          placeholder="Email address"
-          className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
-          required
-        />
-      ) : (
-        <input
-          type="tel"
-          name="phone"
-          value={formData.phone}
-          onChange={handleChange}
-          placeholder="Phone number"
-          className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
-          required
-        />
-      )}
+    <>
+      <form className="space-y-4" onSubmit={otpSent ? verifyOtp : handleSubmit}>
+        {/* ✅ Phone */}
+        {contactMethod === "phone" && !otpSent && (
+          <>
+            <input
+              type="tel"
+              name="phone"
+              placeholder="Phone number"
+              value={formData.phone}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border rounded"
+              required
+            />
 
-      <div className="relative">
-        <input
-          type={showPassword ? "text" : "password"}
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          placeholder="Password"
-          className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
-          required
-        />
-        <button
-          type="button"
-          onClick={() => setShowPassword((s) => !s)}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-        >
-          {showPassword ? "Hide" : "Show"}
-        </button>
-      </div>
+            <button
+              type="submit"
+              className="w-full bg-black text-white py-2 rounded"
+              disabled={loading}
+            >
+              {loading ? "Sending OTP..." : "Send OTP"}
+            </button>
+          </>
+        )}
 
-      {error && <p className="text-red-500 text-sm">{error}</p>}
+        {/* ✅ OTP View */}
+        {contactMethod === "phone" && otpSent && (
+          <>
+            <input
+              type="text"
+              placeholder="Enter OTP"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              className="w-full px-4 py-2 border rounded"
+              maxLength="6"
+              required
+            />
 
-      <button
-        type="submit"
-        className={`w-full bg-black text-white py-2 rounded-md transition ${
-          loading ? "opacity-50 cursor-not-allowed" : "hover:opacity-95"
-        }`}
-        disabled={loading}
-      >
-        {loading ? "Logging in..." : "Login"}
-      </button>
+            <button
+              type="submit"
+              className="w-full bg-black text-white py-2 rounded"
+              disabled={loading}
+            >
+              {loading ? "Verifying..." : "Verify OTP"}
+            </button>
+          </>
+        )}
 
-      <div className="text-right">
-        <button
-          type="button"
-          className="text-sm text-blue-600 hover:underline"
-          onClick={() => alert("Forgot password flow coming soon!")}
-        >
-          Forgot password?
-        </button>
-      </div>
-    </form>
+        {/* ✅ Email Login */}
+        {contactMethod === "email" && (
+          <>
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border rounded"
+              required
+            />
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border rounded"
+              required
+            />
+            <button
+              type="submit"
+              className="w-full bg-black text-white py-2 rounded"
+              disabled={loading}
+            >
+              Login
+            </button>
+          </>
+        )}
+
+        {error && <p className="text-red-500 text-center">{error}</p>}
+      </form>
+
+      {/* ✅ ReCAPTCHA container DO NOT REMOVE */}
+      <div id="recaptcha-container"></div>
+    </>
   );
 };
 

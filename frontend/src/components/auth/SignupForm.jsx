@@ -149,16 +149,21 @@ const SignupForm = ({ contactMethod, onSuccess }) => {
             throw new Error("Phone number not found after verification.");
           }
 
+          const idToken = await result.user.getIdToken();
+
           const payload = {
             name: formData.fullName.trim(),
             phone: phoneNumber,
-            password: formData.password,
+            token: idToken,
           };
+          if (formData.email?.trim()) {
+            payload.email = formData.email.trim();
+          }
 
           console.log("📦 Sending payload:", payload);
 
           const { data } = await axios.post(
-            `${import.meta.env.VITE_API_URL}/api/auth/verify-otp`,
+            `${import.meta.env.VITE_API_URL}/api/auth/firebase-login`,
             payload,
             {
               headers: { "Content-Type": "application/json" },
@@ -287,35 +292,38 @@ const SignupForm = ({ contactMethod, onSuccess }) => {
                 />
               </div>
             )}
+            {contactMethod === "email" && (
+              <>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Password"
+                    className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((s) => !s)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                  >
+                    {showPassword ? "🙈" : "👁"}
+                  </button>
+                </div>
 
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Password"
-                className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((s) => !s)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-              >
-                {showPassword ? "🙈" : "👁"}
-              </button>
-            </div>
-
-            <input
-              type="password"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              placeholder="Confirm Password"
-              className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
-              required
-            />
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="Confirm Password"
+                  className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
+                  required
+                />
+              </>
+            )}
 
             {errors.general && (
               <p className="text-red-500 text-sm">{errors.general}</p>

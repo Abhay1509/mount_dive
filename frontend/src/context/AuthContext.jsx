@@ -25,6 +25,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("token");
     localStorage.removeItem("userData");
     setUser(null);
+    window.location.reload();
   };
 
   return (

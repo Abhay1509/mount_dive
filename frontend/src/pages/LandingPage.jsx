@@ -33,8 +33,8 @@ const LandingPage = () => {
     5000
   );
 
-  const { user } = useAuth();           // ✅ hook inside component
-  const navigate = useNavigate();       // ✅ hook inside component
+  const { user } = useAuth(); // ✅ hook inside component
+  const navigate = useNavigate(); // ✅ hook inside component
 
   // Mouse parallax
   const mouseX = useSpring(0, { stiffness: 50, damping: 20 });
@@ -123,7 +123,7 @@ const LandingPage = () => {
               className="mt-6 px-8 py-3 bg-blue-500 text-white font-bold rounded-full shadow-lg hover:bg-blue-600 transition"
               onClick={() => {
                 if (user) navigate("/book-trek"); // logged-in → booking page
-                else navigate("/auth/login");     // guest → login page
+                else navigate("/auth/login"); // guest → login page
               }}
             >
               Join us Now

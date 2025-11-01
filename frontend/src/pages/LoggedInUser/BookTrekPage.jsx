@@ -15,7 +15,7 @@ const BookTrekPage = () => {
           Access Denied
         </h1>
         <p className="text-gray-700 mb-6">
-          Testing Branching
+          You need to log in to book a trek.
         </p>
         <button
           onClick={() => navigate("/auth/login")}
