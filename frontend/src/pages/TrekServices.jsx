@@ -4,19 +4,19 @@ import { motion } from "framer-motion";
 const services = [
   {
     title: "Hiking",
-    img: "https://images.pexels.com/photos/34033018/pexels-photo-34033018.jpeg",
+    img: "/assets/LandingHeroCarousel/bg1.webp",
   },
   {
     title: "Camping",
-    img: "https://images.pexels.com/photos/325185/pexels-photo-325185.jpeg",
+    img: "/assets/LandingHeroCarousel/bg2.webp",
   },
   {
     title: "Trekking",
-    img: "https://images.pexels.com/photos/66997/pexels-photo-66997.jpeg",
+    img: "/assets/LandingHeroCarousel/bg3.webp",
   },
   {
     title: "Mountaineering",
-    img: "https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg",
+    img: "/assets/LandingHeroCarousel/bg4.webp",
   },
 ];
 

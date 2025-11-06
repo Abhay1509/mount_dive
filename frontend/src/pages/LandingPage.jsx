@@ -21,11 +21,12 @@ const Gallery = React.lazy(() => import("./Gallery"));
 
 // Hero Carousel Images
 const backgroundImages = [
-  "https://images.pexels.com/photos/34033018/pexels-photo-34033018.jpeg",
-  "https://images.pexels.com/photos/53214/trekking-hiking-group-alpine-53214.jpeg",
-  "https://images.pexels.com/photos/1054218/pexels-photo-1054218.jpeg",
-  "https://images.pexels.com/photos/2403502/pexels-photo-2403502.jpeg",
+  "/assets/LandingHeroCarousel/bg1.webp",
+  "/assets/LandingHeroCarousel/bg2.webp",
+  "/assets/LandingHeroCarousel/bg3.webp",
+  "/assets/LandingHeroCarousel/bg4.webp",
 ];
+
 
 const LandingPage = () => {
   const { currentImage, setCurrentImage } = useHeroCarousel(

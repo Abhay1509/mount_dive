@@ -7,8 +7,9 @@ const OurStory = () => {
         {/* Left Image */}
         <div className="relative">
           <img
-            src="https://images.pexels.com/photos/414171/pexels-photo-414171.jpeg"
+            src="/assets/OurStoryImg/OurStoryImg.webp"
             alt="Our Story"
+            loading="lazy"
             className="rounded-2xl shadow-lg w-full h-[400px] object-cover"
           />
         </div>

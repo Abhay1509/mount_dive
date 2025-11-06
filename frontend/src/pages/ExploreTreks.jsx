@@ -7,32 +7,32 @@ const treks = [
     id: 1,
     title: "Everest Base Camp",
     image:
-      "https://images.pexels.com/photos/30439897/pexels-photo-30439897.jpeg",
+      "/assets/LandingHeroCarousel/bg2.webp",
   },
   {
     id: 2,
     title: "Annapurna Circuit",
-    image: "https://images.pexels.com/photos/1236701/pexels-photo-1236701.jpeg",
+    image: "/assets/LandingHeroCarousel/bg1.webp",
   },
   {
     id: 3,
     title: "Kilimanjaro",
-    image: "https://images.pexels.com/photos/3650025/pexels-photo-3650025.jpeg",
+    image: "/assets/LandingHeroCarousel/bg4.webp",
   },
   {
     id: 4,
     title: "Alps Hiking",
-    image: "https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg",
+    image: "/assets/LandingHeroCarousel/bg3.webp",
   },
   {
     id: 5,
     title: "Rocky Mountains",
-    image: "https://images.pexels.com/photos/691668/pexels-photo-691668.jpeg",
+    image: "/assets/LandingHeroCarousel/bg2.webp",
   },
   {
     id: 6,
     title: "Andes Adventure",
-    image: "https://images.pexels.com/photos/869258/pexels-photo-869258.jpeg",
+    image: "/assets/LandingHeroCarousel/bg1.webp",
   },
 ];
 

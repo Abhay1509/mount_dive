@@ -6,25 +6,25 @@ const teamMembers = [
   {
     name: "Conor Walk",
     role: "Mountain Guide",
-    img: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg",
+    img: "/assets/LandingHeroCarousel/bg1.webp",
     socials: { facebook: "#", instagram: "#", twitter: "#" },
   },
   {
     name: "Jake Snow",
     role: "Camp Leader",
-    img: "https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg",
+    img: "/assets/LandingHeroCarousel/bg2.webp",
     socials: { facebook: "#", instagram: "#", twitter: "#" },
   },
   {
     name: "Alex Perry",
     role: "Trek Specialist",
-    img: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg",
+    img: "/assets/LandingHeroCarousel/bg3.webp",
     socials: { facebook: "#", instagram: "#", twitter: "#" },
   },
   {
     name: "Amanda Trailblazer",
     role: "Adventure Coach",
-    img: "https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg",
+    img: "/assets/LandingHeroCarousel/bg4.webp",
     socials: { facebook: "#", instagram: "#", twitter: "#" },
   },
 ];
