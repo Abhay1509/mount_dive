@@ -20,13 +20,13 @@ const AuthPage = () => {
   // ✅ Use correct asset paths (no /public prefix)
   const images = [
     {
-      src: "/assets/hero_img_1.jpg",
+      src: "/assets/LandingHeroCarousel/bg4.webp",
       alt: "Forest 1",
       captionTitle: "Hiking the Ancient Pine Forest",
       captionText: "Lorem ipsum dolor sit amet.",
     },
     {
-      src: "/assets/trek_bg_home1.jpg",
+      src: "/assets/LandingHeroCarousel/bg1.webp",
       alt: "Forest 2",
       captionTitle: "Explore the Mountain Trails",
       captionText: "Discover scenic trails.",

@@ -1,12 +1,12 @@
 import React from "react";
 
 const images = [
-  "https://images.pexels.com/photos/325185/pexels-photo-325185.jpeg",
-  "https://images.pexels.com/photos/66997/pexels-photo-66997.jpeg",
-  "https://images.pexels.com/photos/34033018/pexels-photo-34033018.jpeg",
-  "https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg",
-  "https://images.pexels.com/photos/3650025/pexels-photo-3650025.jpeg",
-  "https://images.pexels.com/photos/1236701/pexels-photo-1236701.jpeg",
+  "/assets/LandingHeroCarousel/bg1.webp",
+  "/assets/LandingHeroCarousel/bg3.webp",
+  "/assets/LandingHeroCarousel/bg4.webp",
+  "/assets/LandingHeroCarousel/bg3.webp",
+  "/assets/LandingHeroCarousel/bg2.webp",
+  "/assets/LandingHeroCarousel/bg1.webp",
 ];
 
 const Gallery = () => {
