@@ -48,7 +48,17 @@ const SignupForm = ({ contactMethod, onSuccess }) => {
 
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
+<<<<<<< Updated upstream
     setFormData((prev) => ({ ...prev, [name]: value }));
+=======
+    let newValue = value;
+
+    if (name === "fullName") {
+      newValue = value.replace(/[^A-Za-z\s]/g, "");
+    }
+
+    setFormData((prev) => ({ ...prev, [name]: newValue }));
+>>>>>>> Stashed changes
     setErrors((prev) => ({ ...prev, [name]: "" }));
   }, []);
 
@@ -239,6 +249,7 @@ const SignupForm = ({ contactMethod, onSuccess }) => {
   };
 
   return (
+<<<<<<< Updated upstream
     <>
       <form
         className="space-y-4"
@@ -379,6 +390,143 @@ const SignupForm = ({ contactMethod, onSuccess }) => {
 
       <div id="recaptcha-container" style={{ display: "none" }}></div>
     </>
+=======
+    <form className="space-y-3.5 mt-10 relative" onSubmit={handleSubmit}>
+      {/* Full Name */}
+      <img
+        src="/username.svg"
+        className=" absolute top-6 left-1 h-[20px]"
+        alt=""
+      />
+      <input
+        type="text"
+        name="fullName"
+        value={formData.fullName}
+        onChange={handleChange}
+        placeholder="Full Name"
+        aria-label="Full Name"
+        className="w-full px-8 py-2 border rounded-lg shadow-md border-b-1 border-black focus:ring-2 focus:ring-blue-400 placeholder-red-300"
+        required
+      />
+
+      {/* Email or Phone */}
+      
+      {contactMethod === "email" ? (
+        <>
+        <img
+        src="/mail.svg"
+        className=" absolute top-[67px] left-1 h-[20px]"
+        alt=""
+      />
+        <input
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          placeholder="Email address"
+          aria-label="Email"
+          className="w-full px-8 py-2 border rounded-lg shadow-md border-b-1 border-black focus:ring-2 focus:ring-blue-400 placeholder-red-300"
+          required
+          />
+          </>
+      ) : (
+        <>
+        <img
+        src="/call.svg"
+        className=" absolute top-[67px] left-1 h-[20px]"
+        alt=""
+        />
+        <input
+          type="tel"
+          name="phone"
+          value={formData.phone}
+          onChange={handleChange}
+          placeholder="Phone number"
+          aria-label="Phone"
+          className="w-full px-8 py-2 border rounded-lg shadow-md border-b-1 border-black focus:ring-2 focus:ring-blue-400 placeholder-red-300"
+          required
+          />
+          </>
+      )}
+
+      {/* Password */}
+      {contactMethod === "email" ? (
+        <>
+          <img
+            src="/lock.svg"
+            className="absolute top-[124px] left-1 h-[20px] z-30"
+            alt=""
+          />
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Password"
+              aria-label="Password"
+              className="w-full px-8 py-2 border rounded-lg shadow-md border-b-1 border-black focus:ring-2 focus:ring-blue-400 placeholder-red-300"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((s) => !s)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+            >
+              {showPassword ? (
+                <img src="/viewon.svg" alt="" />
+              ) : (
+                <img src="/viewoff.svg" alt="" />
+              )}
+            </button>
+          </div>
+
+          {/* Confirm Password */}
+          <img
+            src="/lock.svg"
+            className="absolute top-[183px] left-1 h-[20px] z-30"
+            alt=""
+          />
+          <input
+            type="password"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            placeholder="Confirm Password"
+            aria-label="Confirm Password"
+            className="w-full px-8 py-2 border rounded-lg shadow-md border-b-1 border-black focus:ring-2 focus:ring-blue-400 placeholder-red-300"
+            required
+          />
+
+          <div className="relative">
+            {errors.general && (
+              <p className="absolute top-[-10px]  left-0 text-red-500 text-sm">
+                {errors.general}
+              </p>
+            )}
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="w-full bg-black text-white py-2 rounded-md hover:opacity-95 transition disabled:opacity-60"
+            disabled={loading}
+          >
+            {loading ? "Signing up..." : "Sign up"}
+          </button>
+        </>
+      ) : (
+        <button
+          type="submit"
+          className="w-full bg-black text-white py-2 rounded-md hover:opacity-95 transition disabled:opacity-60"
+          disabled={loading}
+        >
+          {loading ? "Sending OTP..." : "Send OTP"}
+        </button>
+      )}
+    </form>
+>>>>>>> Stashed changes
   );
 };
 

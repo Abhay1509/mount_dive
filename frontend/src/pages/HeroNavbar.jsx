@@ -1,6 +1,10 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+<<<<<<< Updated upstream
 import { useAuth } from "../context/AuthContext";
+=======
+import SearchSidebar from "./Search";
+>>>>>>> Stashed changes
 
 const HeroNavbar = () => {
   const navigate = useNavigate();
@@ -94,6 +98,7 @@ const HeroNavbar = () => {
           </button>
         )}
       </div>
+      <SearchSidebar/>
     </nav>
   );
 };

@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import treks from "../data/treks"; // ✅ import same data
+import treks from "../data/treks"; // ✅ import same dataz
 
 const TrekDetails = () => {
   const { id } = useParams();

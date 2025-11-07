@@ -71,27 +71,59 @@ const LoginForm = ({ contactMethod, onSuccess }) => {
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
       {contactMethod === "email" ? (
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          placeholder="Email address"
-          className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
-          required
-        />
+        <>
+        <img src="/mail.svg" className=" h-[20px] w-[20px] absolute top-[57px] left-2 " alt="" />
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="Email address"
+            className="w-full px-8 py-2 border rounded-lg shadow-md border-b-1 border-black focus:ring-2 focus:ring-blue-400 placeholder-red-300"
+            required
+          />
+          {/* Password input */}
+          <div className="relative">
+            <img src="/lock.svg" className=" h-[20px] w-[20px] absolute top-[10px] left-2 " alt="" />
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Password"
+              className="w-full px-8 py-2 border rounded-lg shadow-md border-b-1 border-black focus:ring-2 focus:ring-blue-400 placeholder-red-300"
+              required
+            />
+
+            <button
+              type="button"
+              onClick={() => setShowPassword((s) => !s)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+            >
+              {showPassword ? (
+                <img src="/viewoff.svg" alt="" />
+              ) : (
+                <img src="/viewon.svg" alt="" />
+              )}
+            </button>
+          </div>
+        </>
       ) : (
+        <>
+        <img src="/mail.svg" className=" h-[20px] w-[20px] absolute top-[57px] left-1 " alt="" />
         <input
           type="tel"
           name="phone"
           value={formData.phone}
           onChange={handleChange}
-          placeholder="Phone number"
-          className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
+          placeholder="Phone number / E-mail"
+          className="w-full px-8 py-2 border rounded-lg shadow-md border-b-1 border-black focus:ring-2 focus:ring-blue-400 placeholder-red-300"
           required
-        />
+          />
+          </>
       )}
 
+<<<<<<< Updated upstream
       <div className="relative">
         <input
           type={showPassword ? "text" : "password"}
@@ -111,6 +143,8 @@ const LoginForm = ({ contactMethod, onSuccess }) => {
         </button>
       </div>
 
+=======
+>>>>>>> Stashed changes
       {error && <p className="text-red-500 text-sm">{error}</p>}
 
       <button
@@ -120,9 +154,19 @@ const LoginForm = ({ contactMethod, onSuccess }) => {
         }`}
         disabled={loading}
       >
-        {loading ? "Logging in..." : "Login"}
+        {contactMethod === "email"
+          ? loading
+            ? "Logging in..."
+            : "Login"
+          : loading
+          ? "Sending OTP..."
+          : "Send OTP"}
       </button>
 
+<<<<<<< Updated upstream
+=======
+      {/* Optional UX improvement
+>>>>>>> Stashed changes
       <div className="text-right">
         <button
           type="button"
@@ -131,7 +175,7 @@ const LoginForm = ({ contactMethod, onSuccess }) => {
         >
           Forgot password?
         </button>
-      </div>
+      </div> */}
     </form>
   );
 };

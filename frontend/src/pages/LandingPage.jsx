@@ -11,8 +11,12 @@ import TrekServices from "./TrekServices";
 import OurStory from "./OurStory";
 import LandingPageFooter from "./LandingPageFooter";
 import useHeroCarousel from "../hooks/useHeroCarousel";
+<<<<<<< Updated upstream
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+=======
+import { Link } from "react-router-dom";
+>>>>>>> Stashed changes
 
 // Lazy-loaded sections
 const Team = React.lazy(() => import("./Team"));
@@ -116,6 +120,7 @@ const LandingPage = () => {
               Explore breathtaking trails and conquer new heights with our
               guided mountain and hiking adventures.
             </motion.p>
+<<<<<<< Updated upstream
 
             <motion.button
               whileHover={{ scale: 1.1 }}
@@ -128,6 +133,17 @@ const LandingPage = () => {
             >
               Join us Now
             </motion.button>
+=======
+            <Link to="/TrekCards">
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                className="mt-6 px-8 py-3 bg-blue-500 text-white font-bold rounded-full shadow-lg hover:bg-blue-600 transition"
+              >
+                Join us Now
+              </motion.button>
+            </Link>
+>>>>>>> Stashed changes
           </div>
         </div>
 
