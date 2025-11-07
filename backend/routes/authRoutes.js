@@ -5,7 +5,6 @@ import { firebaseLogin } from "../controllers/authController.js";
 
 const router = express.Router();
 
-// router.post("/signup", signup);
 router.post("/send-otp", sendOtp);
 router.post("/verify-otp", verifyOtp);
 router.post("/login", login);

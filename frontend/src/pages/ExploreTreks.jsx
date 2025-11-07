@@ -1,46 +1,30 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-
-const treks = [
-  {
-    id: 1,
-    title: "Everest Base Camp",
-    image:
-      "/assets/LandingHeroCarousel/bg2.webp",
-  },
-  {
-    id: 2,
-    title: "Annapurna Circuit",
-    image: "/assets/LandingHeroCarousel/bg1.webp",
-  },
-  {
-    id: 3,
-    title: "Kilimanjaro",
-    image: "/assets/LandingHeroCarousel/bg4.webp",
-  },
-  {
-    id: 4,
-    title: "Alps Hiking",
-    image: "/assets/LandingHeroCarousel/bg3.webp",
-  },
-  {
-    id: 5,
-    title: "Rocky Mountains",
-    image: "/assets/LandingHeroCarousel/bg2.webp",
-  },
-  {
-    id: 6,
-    title: "Andes Adventure",
-    image: "/assets/LandingHeroCarousel/bg1.webp",
-  },
-];
+import axios from "axios";
 
 const ExploreTreks = () => {
+  const [treks, setTreks] = useState([]); // ✅ will come from API
+  const [loading, setLoading] = useState(true);
   const [startIndex, setStartIndex] = useState(0);
   const [cardsPerView, setCardsPerView] = useState(4);
 
-  // Responsive cards per view
+  // ✅ Fetch trek data from backend API
+  useEffect(() => {
+    const fetchTreks = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/treks");
+        setTreks(response.data);
+      } catch (error) {
+        console.error("Error fetching treks:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTreks();
+  }, []);
+
+  // ✅ Responsive cards per view
   useEffect(() => {
     const updateCardsPerView = () => {
       if (window.innerWidth < 768) {
@@ -51,12 +35,12 @@ const ExploreTreks = () => {
         setCardsPerView(4);
       }
     };
-
     updateCardsPerView();
     window.addEventListener("resize", updateCardsPerView);
     return () => window.removeEventListener("resize", updateCardsPerView);
   }, []);
 
+  // ✅ Navigation
   const handlePrev = () => {
     setStartIndex((prev) => Math.max(prev - 1, 0));
   };
@@ -64,6 +48,23 @@ const ExploreTreks = () => {
   const handleNext = () => {
     setStartIndex((prev) => Math.min(prev + 1, treks.length - cardsPerView));
   };
+
+  // ✅ Loading or empty state
+  if (loading) {
+    return (
+      <section className="py-20 text-center text-gray-500 text-lg">
+        Loading treks...
+      </section>
+    );
+  }
+
+  if (!treks.length) {
+    return (
+      <section className="py-20 text-center text-gray-500 text-lg">
+        No treks available at the moment.
+      </section>
+    );
+  }
 
   return (
     <section id="treks" className="py-20 bg-gray-50 relative">
@@ -79,17 +80,16 @@ const ExploreTreks = () => {
 
       {/* Slider Container */}
       <div className="relative max-w-7xl mx-auto px-6 md:px-0">
-        {/* Cards Row */}
         <div className="overflow-hidden">
           <motion.div
-            className="flex gap-6 justify-center" // ✅ added justify-center
+            className="flex gap-6 justify-center"
             animate={{ x: `-${startIndex * (100 / cardsPerView)}%` }}
             transition={{ duration: 0.6, ease: "easeInOut" }}
             style={{ width: `${(treks.length / cardsPerView) * 100}%` }}
           >
             {treks.map((trek, index) => (
               <motion.div
-                key={trek.id}
+                key={trek._id || index}
                 className="relative rounded-2xl shadow-lg cursor-pointer flex-shrink-0 w-72 h-96 bg-white"
                 whileHover={{
                   scale: 1.05,
@@ -107,7 +107,6 @@ const ExploreTreks = () => {
                   ease: "easeOut",
                 }}
               >
-                {/* Image wrapper */}
                 <div className="w-full h-full rounded-2xl overflow-hidden">
                   <img
                     src={trek.image}
@@ -116,7 +115,6 @@ const ExploreTreks = () => {
                   />
                 </div>
 
-                {/* Overlay Title */}
                 <motion.div
                   className="absolute inset-0 flex items-center justify-center bg-black text-white text-lg font-semibold rounded-2xl"
                   initial={{ opacity: 0 }}
