@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 
 import authRoutes from "./routes/authRoutes.js";
+import trekRoutes from "./routes/trekRoutes.js";
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ connectDB();
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/treks", trekRoutes);
 
 // Start server
 const PORT = process.env.PORT || 5000;
