@@ -51,7 +51,7 @@ const TrekServices = () => {
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
-        Our <span className="text-blue-500">Services</span>
+        Our <span className="text-[#68917C]">Services</span>
       </motion.h2>
 
       <motion.p
@@ -100,7 +100,7 @@ const TrekServices = () => {
                   <p className="text-gray-200 text-sm mb-4">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                   </p>
-                  <button className="px-4 py-2 bg-white text-gray-900 rounded-full font-medium hover:bg-blue-500 hover:text-white transition">
+                  <button className="px-4 py-2 bg-white text-gray-900 rounded-full font-medium hover:bg-[#68917C] hover:text-white transition">
                     Enquire Now
                   </button>
                 </div>
@@ -116,7 +116,7 @@ const TrekServices = () => {
               key={idx}
               onClick={() => setStartIndex(idx)}
               className={`w-3 h-3 rounded-full transition ${
-                startIndex === idx ? "bg-blue-500 scale-125" : "bg-gray-300"
+                startIndex === idx ? "bg-[#8B7355] scale-125" : "bg-gray-300"
               }`}
             />
           ))}

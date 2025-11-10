@@ -9,11 +9,11 @@ const LandingPageFooter = () => {
         <div>
           <h3 className="text-lg font-semibold text-white mb-4">Links</h3>
           <ul className="space-y-3 text-sm">
-            <li><a href="#home" className="hover:text-blue-500 transition">Home</a></li>
-            <li><a href="#services" className="hover:text-blue-500 transition">Services</a></li>
-            <li><a href="#story" className="hover:text-blue-500 transition">Our Story</a></li>
-            <li><a href="#blog" className="hover:text-blue-500 transition">Blog</a></li>
-            <li><a href="#event" className="hover:text-blue-500 transition">Event</a></li>
+            <li><a href="#home" className="hover:text-[#68917C] transition">Home</a></li>
+            <li><a href="#services" className="hover:text-[#68917C] transition">Services</a></li>
+            <li><a href="#story" className="hover:text-[#68917C] transition">Our Story</a></li>
+            <li><a href="#blog" className="hover:text-[#68917C] transition">Blog</a></li>
+            <li><a href="#event" className="hover:text-[#68917C] transition">Event</a></li>
           </ul>
         </div>
 
@@ -21,10 +21,10 @@ const LandingPageFooter = () => {
         <div>
           <h3 className="text-lg font-semibold text-white mb-4">Our Services</h3>
           <ul className="space-y-3 text-sm">
-            <li><a href="#" className="hover:text-blue-500 transition">Contact Us</a></li>
-            <li><a href="#" className="hover:text-blue-500 transition">Terms of Service</a></li>
-            <li><a href="#" className="hover:text-blue-500 transition">Privacy Policy</a></li>
-            <li><a href="#" className="hover:text-blue-500 transition">Returns & Refunds</a></li>
+            <li><a href="#" className="hover:text-[#68917C] transition">Contact Us</a></li>
+            <li><a href="#" className="hover:text-[#68917C] transition">Terms of Service</a></li>
+            <li><a href="#" className="hover:text-[#68917C] transition">Privacy Policy</a></li>
+            <li><a href="#" className="hover:text-[#68917C] transition">Returns & Refunds</a></li>
           </ul>
         </div>
 
@@ -59,7 +59,7 @@ const LandingPageFooter = () => {
               placeholder="Enter Email Address..."
               className="w-full px-4 py-2 rounded-l-md text-gray-800 focus:outline-none"
             />
-            <button className="bg-blue-500 px-5 py-2 rounded-r-md hover:bg-blue-600 transition">
+            <button className="bg-[#8B7355] px-5 py-2 rounded-r-md hover:bg-[#68917C] transition">
               Sign In
             </button>
           </div>

@@ -13,7 +13,7 @@ const Gallery = () => {
   return (
     <section id="gallery" className="py-20 px-6 md:px-16 bg-white text-center">
       <h2 className="text-3xl md:text-4xl font-bold mb-4">
-        Explore <span className="text-blue-500">Gallery</span>
+        Explore <span className="text-[#68917C]">Gallery</span>
       </h2>
       <p className="text-gray-600 mb-12 max-w-2xl mx-auto">
         Discover breathtaking moments from our past adventures and hikes around
@@ -35,7 +35,7 @@ const Gallery = () => {
 
       {/* Button */}
       <div className="mt-12">
-        <button className="px-8 py-3 bg-blue-500 text-white font-semibold rounded-full shadow-lg hover:bg-blue-600 transition">
+        <button className="px-8 py-3 bg-[#8B7355] text-white font-semibold rounded-full shadow-lg hover:bg-[#68917C] transition">
           See All Pictures
         </button>
       </div>

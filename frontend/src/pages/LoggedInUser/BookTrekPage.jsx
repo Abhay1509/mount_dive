@@ -10,6 +10,8 @@ import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import Card from "./LoggedInComponents/Card";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+
 
 const slides = [
   {
@@ -183,7 +185,7 @@ const cardsData = [
 ];
 
 const BookTrekPage = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [selectedType, setSelectedType] = useState("All");
   const [maxPrice, setMaxPrice] = useState(50000);
@@ -191,6 +193,7 @@ const BookTrekPage = () => {
   const cards = useMemo(() => cardsData, []);
   const deferredType = useDeferredValue(selectedType);
   const deferredMaxPrice = useDeferredValue(maxPrice);
+  const [isOpen, setIsOpen] = useState(false);
 
   const filteredCards = useMemo(() => {
     return cards.filter((card) => {
@@ -284,7 +287,7 @@ const BookTrekPage = () => {
     };
   }, []);
 
-  // ✅ Guest protection
+  //  Guest protection
   if (!user) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
@@ -306,25 +309,227 @@ const BookTrekPage = () => {
       <div className="relative w-screen h-screen overflow-hidden bg-black text-white font-[Poppins]">
         {/* Header */}
         <header className="absolute top-0 left-0 w-full flex items-center h-12 px-24 z-[1000]">
-          <nav className="flex space-x-3 text-sm">
-            {[
-              { name: "Home", href: "/" },
-              { name: "About", href: "/about" },
-              { name: "Services", href: "/services" },
-              { name: "Contact", href: "/contact" },
-            ].map((item, i) => (
-              <a
-                key={i}
-                href={item.href}
-                className={`px-2 py-1 rounded transition-colors ${
-                  i === 0
-                    ? "bg-[rgba(104,145,124,1)] text-white"
-                    : "hover:bg-[rgba(104,145,124,1)] hover:text-white"
+          <nav className="fixed top-0 left-0 w-full h-[65px] bg-white/80 backdrop-blur-md z-50 flex items-center justify-between px-4 sm:px-6 md:px-12 shadow-sm">
+            {/* Logo */}
+            <Link to="/">
+              <img
+                src="/SVG/logo1.svg"
+                alt="Logo"
+                className="h-[45px] w-auto object-contain"
+              />
+            </Link>
+
+            {/* Desktop Menu */}
+            <ul className="hidden md:flex gap-8 font-syne text-[15px] text-gray-700 font-light">
+              <li>
+                <Link
+                  to="/landing"
+                  className="hover:text-[rgba(104,145,124,1)] transition-colors"
+                >
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/explore"
+                  className="hover:text-[rgba(104,145,124,1)] transition-colors"
+                >
+                  Explore
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/about"
+                  className="hover:text-[rgba(104,145,124,1)] transition-colors"
+                >
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/gallery"
+                  className="hover:text-[rgba(104,145,124,1)] transition-colors"
+                >
+                  Gallery
+                </Link>
+              </li>
+            </ul>
+
+            {/* Desktop Auth/User Button */}
+            <div className="hidden md:flex">
+              {user ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setIsOpen(!isOpen)}
+                    className="ml-4 px-6 py-2 rounded-full border border-[#8F6E56] text-[#3B3B3B] hover:bg-[#68917C] font-syne transition hover:text-white flex gap-3 items-center text-[14px]"
+                  >
+                    Hello {user.name}
+                    <img src="/SVG/arrow-down.svg" alt="" />
+                  </button>
+
+                  {/* Desktop Dropdown */}
+                  {isOpen && (
+                    <div className="absolute right-0 mt-2 w-[200px] bg-white shadow-md rounded-md flex flex-col py-2 text-sm font-syne text-gray-700">
+                      <Link
+                        to="/profile"
+                        className="px-4 py-2 hover:bg-gray-100 flex gap-2 items-center"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <img
+                          src="/SVG/profile.svg"
+                          className="h-4 w-5"
+                          alt=""
+                        />
+                        Profile
+                      </Link>
+                      <Link
+                        to="/upcoming-treks"
+                        className="px-4 py-2 hover:bg-gray-100 flex gap-2 items-center"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <img src="/SVG/timer.svg" className="h-4 w-5" alt="" />
+                        Upcoming Treks
+                      </Link>
+                      <Link
+                        to="/previous-treks"
+                        className="px-4 py-2 hover:bg-gray-100 flex gap-2 items-center"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <img src="/SVG/timer.svg" className="h-4 w-5" alt="" />
+                        Previous Treks
+                      </Link>
+                      <button
+                        onClick={() => {
+                          setIsOpen(false);
+                          logout();
+                        }}
+                        className="px-4 py-2 hover:bg-gray-100 flex gap-2 items-center text-left"
+                      >
+                        <img src="/SVG/logout.svg" className="h-4 w-5" alt="" />
+                        Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <button
+                  onClick={() => navigate("/auth/signup")}
+                  className="ml-4 px-6 py-2 rounded-full border border-[#8F6E56] text-[#3B3B3B] hover:bg-[#68917C] transition hover:text-white"
+                >
+                  Sign Up
+                </button>
+              )}
+            </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              className="md:hidden flex flex-col justify-center items-center w-8 h-8 focus:outline-none"
+              onClick={() => setIsOpen(!isOpen)}
+            >
+              <span
+                className={`block h-0.5 w-6 bg-gray-800 transition-all duration-300 ${
+                  isOpen ? "rotate-45 translate-y-1.5" : ""
                 }`}
-              >
-                {item.name}
-              </a>
-            ))}
+              ></span>
+              <span
+                className={`block h-0.5 w-6 bg-gray-800 my-1 transition-all duration-300 ${
+                  isOpen ? "opacity-0" : ""
+                }`}
+              ></span>
+              <span
+                className={`block h-0.5 w-6 bg-gray-800 transition-all duration-300 ${
+                  isOpen ? "-rotate-45 -translate-y-1.5" : ""
+                }`}
+              ></span>
+            </button>
+
+            {/*  Mobile Dropdown with ALL Links */}
+            {isOpen && (
+              <div className="absolute top-[65px] left-0 w-full bg-white shadow-md md:hidden flex flex-col items-center py-4 space-y-4 font-syne text-gray-700 text-sm">
+                {/* Navigation Links */}
+                <Link
+                  to="/landing"
+                  className="hover:text-[rgba(104,145,124,1)]"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Home
+                </Link>
+                <Link
+                  to="/explore"
+                  className="hover:text-[rgba(104,145,124,1)]"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Explore
+                </Link>
+                <Link
+                  to="/about"
+                  className="hover:text-[rgba(104,145,124,1)]"
+                  onClick={() => setIsOpen(false)}
+                >
+                  About Us
+                </Link>
+                <Link
+                  to="/gallery"
+                  className="hover:text-[rgba(104,145,124,1)]"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Gallery
+                </Link>
+
+                {/* Divider */}
+                <div className="w-3/4 border-t border-gray-200 my-2"></div>
+
+                {/* User or Auth Links */}
+                {user ? (
+                  <>
+                    <Link
+                      to="/profile"
+                      className="hover:text-[rgba(104,145,124,1)] flex gap-2 items-center"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <img src="/SVG/profile.svg" className="h-4 w-5" alt="" />
+                      Profile
+                    </Link>
+                    <Link
+                      to="/upcoming-treks"
+                      className="hover:text-[rgba(104,145,124,1)] flex gap-2 items-center"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <img src="/SVG/timer.svg" className="h-4 w-5" alt="" />
+                      Upcoming Treks
+                    </Link>
+                    <Link
+                      to="/previous-treks"
+                      className="hover:text-[rgba(104,145,124,1)] flex gap-2 items-center"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <img src="/SVG/timer.svg" className="h-4 w-5" alt="" />
+                      Previous Treks
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setIsOpen(false);
+                        logout();
+                      }}
+                      className="hover:text-[rgba(104,145,124,1)] flex gap-2 items-center"
+                    >
+                      <img src="/SVG/logout.svg" className="h-4 w-5" alt="" />
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setIsOpen(false);
+                      navigate("/auth/signup");
+                    }}
+                    className="px-4 py-2 border border-[#8F6E56] text-[#3B3B3B] rounded-md hover:bg-[#68917C] hover:text-white"
+                  >
+                    Sign Up
+                  </button>
+                )}
+              </div>
+            )}
           </nav>
         </header>
 
@@ -345,7 +550,7 @@ const BookTrekPage = () => {
             ))}
           </div>
 
-          {/* ✅ Fixed content (stays in one place) */}
+          {/*Fixed content (stays in one place) */}
           <div className="absolute top-1/2 left-[100px] -translate-y-1/2 text-left text-white w-[400px] z-[200]">
             <motion.div
               key={`title-${currentSlideIndex}`}
@@ -389,7 +594,7 @@ const BookTrekPage = () => {
                hover:bg-[rgba(104,145,124,1)] flex flex-col justify-center items-center hover:text-white transition-all"
               >
                 <img
-                  src="/bookmark.svg"
+                  src="/SVG/bookmark.svg"
                   className=" h-[20px] w-[20px] "
                   alt=""
                 />
@@ -416,14 +621,12 @@ const BookTrekPage = () => {
             </button>
           </div>
 
-          {/* Time bar */}
           <div
             ref={runningTimeRef}
             className="absolute top-0 left-0 h-[2px] bg-yellow-400 z-[1000]"
           ></div>
         </div>
 
-        {/* Animations */}
         <style>{`
         @keyframes runningTime {
           from { width: 0%; }
@@ -450,15 +653,17 @@ const BookTrekPage = () => {
         .carousel .list .item:nth-child(2) .content { display: block !important; }
       `}</style>
       </div>
-      <div className="relative w-full flex flex-col overflow-hidden py-10">
-        {/* Background */}
+      <div className="relative w-full flex flex-col py-10">
+
         <div
           className="fixed inset-0 z-[-1] bg-cover bg-top"
-          style={{ backgroundImage: "url('assets/LandingHeroCarousel/bg2.webp')" }}
+          style={{
+            backgroundImage: "url('assets/LandingHeroCarousel/bg2.webp')",
+          }}
         >
           <div className="absolute inset-0 bg-gradient-to-b from-white via-[#8F6E56] to-[#8F6E56] opacity-80" />
         </div>
-        {/* Heading */}
+       
         <div className="text-center mt-20 flex flex-col justify-center items-center">
           <h1 className="font-syne font-bold text-[48px] text-black/70 uppercase">
             UNIQUE TRAVEL EXPERIENCE
@@ -468,44 +673,68 @@ const BookTrekPage = () => {
             services
           </p>
         </div>
-        ✅ FILTER BAR
-        {/* <div className="w-full flex flex-col sm:flex-row justify-between items-center gap-6 max-w-6xl mx-auto bg-[#F5F4F0] border border-[#D8D5CA] rounded-lg shadow-md py-5 px-6 mb-10"> */}
-        {/* Type Filter */}
-        {/* <div className="flex flex-col sm:flex-row items-center gap-3">
-            <label className="text-[#3B3B3B] font-semibold">
-              Filter by Type:
-            </label>
-            <select
-              value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value)}
-              className="border border-gray-300 rounded-md px-3 py-2 bg-white text-[#3B3B3B] focus:outline-none focus:ring-1 focus:ring-[#8F6E56]"
-            >
-              {trekTypes.map((type, index) => (
-                <option key={index} value={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
-          </div> */}
-        {/* Price Filter */}
-        {/* <div className="flex flex-col sm:flex-row items-center gap-3">
-            <label className="text-[#3B3B3B] font-semibold">
-              Max Price: ₹{maxPrice.toLocaleString()}
-            </label>
-            <input
-              type="range"
-              min="1000"
-              max="50000"
-              step="500"
-              value={maxPrice}
-              onChange={(e) => setMaxPrice(Number(e.target.value))}
-              className="w-[200px] accent-[#8F6E56]"
-            />
+   
+        <div className="w-full max-w-7xl mx-auto flex flex-col lg:flex-row gap-14 mb-20 pt-10">
+     
+          <div className="hidden lg:block lg:w-[256px]">
+            <div className="sticky top-[100px] bg-white border border-gray-200 rounded-xl p-4 shadow-sm font-syne text-[#3B3B3B] h-fit">
+              <h2 className="text-lg font-semibold mb-4">Filters</h2>
+
+     
+              <div className="mb-6">
+                <label className="block text-sm font-medium mb-2">
+                  Date Range
+                </label>
+                <button className="w-full flex items-center justify-between border border-gray-300 rounded-md px-3 py-2 text-sm hover:border-[#8F6E56] transition">
+                  <span className="text-gray-500">Select Dates</span>
+                  <img src="/SVG/calendar.svg" alt="" className="w-4 h-4" />
+                </button>
+              </div>
+
+             
+              <div className="mb-6">
+                <label className="block text-sm font-medium mb-3">
+                  Budget Range
+                </label>
+                <input
+                  type="range"
+                  min="1000"
+                  max="50000"
+                  step="500"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(Number(e.target.value))}
+                  className="w-full accent-[#8F6E56] cursor-pointer"
+                />
+                <div className="flex justify-between text-xs mt-1 text-gray-600">
+                  <span>Min ₹1,000</span>
+                  <span>Max ₹50,000</span>
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">
+                  Filter by Type
+                </label>
+                <select
+                  value={selectedType}
+                  onChange={(e) => setSelectedType(e.target.value)}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[#8F6E56]"
+                >
+                  {trekTypes.map((type, index) => (
+                    <option key={index} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <button className="w-full bg-[#8F6E56] hover:bg-[#73543F] text-white font-medium py-2 rounded-md transition">
+                Apply Filters
+              </button>
+            </div>
           </div>
-        </div> */}
-        {/* ✅ CARD GRID */}
-        <div className="ml-[90px]">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-16 px-10 max-w-6xl items-stretch mb-20">
+
+          <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-16 items-stretch mr-5">
             {filteredCards.length > 0 ? (
               filteredCards.map((card, idx) => (
                 <Card

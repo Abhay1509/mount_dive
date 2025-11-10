@@ -18,7 +18,7 @@ const OurStory = () => {
         {/* Right Content */}
         <div>
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Our <span className="text-blue-500">Story</span>
+            Our <span className="text-[#68917C]">Story</span>
           </h2>
           <p className="text-gray-600 leading-relaxed mb-6">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
@@ -28,7 +28,7 @@ const OurStory = () => {
           </p>
           <Link
             to="/about"
-            className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-full shadow-lg hover:bg-blue-600 transition"
+            className="px-6 py-3 bg-[#8B7355] text-white font-semibold rounded-full shadow-lg hover:bg-[#68917C] transition"
           >
             Learn More
           </Link>

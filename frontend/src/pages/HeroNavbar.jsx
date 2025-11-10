@@ -19,11 +19,10 @@ const HeroNavbar = () => {
       {/* Logo */}
       <div className="flex items-center space-x-2">
         <img
-          src="https://cdn-icons-png.flaticon.com/512/861/861060.png"
+          src="/SVG/logo1.svg"
           alt="Logo"
-          className="h-10 w-10"
+          className="h-[45px]  w-auto object-contain"
         />
-        <span className="text-xl font-bold tracking-wide">MOUNTDIVE</span>
       </div>
 
       {/* Menu */}
@@ -31,7 +30,7 @@ const HeroNavbar = () => {
         <li>
           <button
             onClick={() => handleScroll("home")}
-            className="hover:text-blue-400 transition"
+            className="hover:text-[#68917C] transition"
           >
             Home
           </button>
@@ -39,7 +38,7 @@ const HeroNavbar = () => {
         <li>
           <button
             onClick={() => handleScroll("trek-services")}
-            className="hover:text-blue-400 transition"
+            className="hover:text-[#68917C] transition"
           >
             Services
           </button>
@@ -47,7 +46,7 @@ const HeroNavbar = () => {
         <li>
           <button
             onClick={() => handleScroll("story")}
-            className="hover:text-blue-400 transition"
+            className="hover:text-[#68917C] transition"
           >
             Our Story
           </button>
@@ -55,7 +54,7 @@ const HeroNavbar = () => {
         <li>
           <button
             onClick={() => handleScroll("trips")}
-            className="hover:text-blue-400 transition"
+            className="hover:text-[#68917C] transition"
           >
             Blog
           </button>
@@ -63,7 +62,7 @@ const HeroNavbar = () => {
         <li>
           <button
             onClick={() => handleScroll("footer")}
-            className="hover:text-blue-400 transition"
+            className="hover:text-[#68917C] transition"
           >
             Event
           </button>
@@ -72,7 +71,7 @@ const HeroNavbar = () => {
 
       {/* Right Side Buttons */}
       <div>
-        <button className="ml-8 px-6 py-2 bg-transparent border-2 border-blue-400 rounded-full text-blue-400 hover:bg-blue-400 hover:text-white transition">
+        <button className="ml-8 px-6 py-2 bg-transparent border-2 border-[#8B7355] rounded-full text-[#FFFFFF] hover:bg-[#68917C] hover:text-white transition">
           Contact Us
         </button>
 
@@ -81,14 +80,14 @@ const HeroNavbar = () => {
         {user ? (
           <button
             onClick={logout}
-            className="ml-4 px-6 py-2 bg-blue-500 rounded-full text-white hover:bg-blue-600 transition"
+            className="ml-4 px-6 py-2 bg-[#8B7355] rounded-full text-white hover:bg-[#68917C] transition"
           >
             Logout
           </button>
         ) : (
           <button
             onClick={() => navigate("/auth/signup")}
-            className="ml-4 px-6 py-2 bg-blue-500 rounded-full text-white hover:bg-blue-600 transition"
+            className="ml-4 px-6 py-2 bg-[#8B7355] rounded-full text-white hover:bg-[#68917C] transition"
           >
             Sign Up
           </button>

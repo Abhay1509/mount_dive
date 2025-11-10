@@ -14,6 +14,7 @@ export default {
       fontFamily: {
         sans: ["Inter", "sans-serif"],  // default font
         fancy: ["Poppins", "sans-serif"],
+        syne: ['"Syne"', 'sans-serif'],
       },
     },
   },

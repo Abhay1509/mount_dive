@@ -8,10 +8,16 @@ import BookNow from "./pages/LoggedInUser/BookNow";
 import Register from "./pages/LoggedInUser/Register";
 import { AuthProvider } from "./context/AuthContext";
 import PrivateRoute from "./components/PrivateRoute";
+import ScrollToTop from "./pages/ScrollToTop";
+import Profile from "./pages/LoggedInUser/Profile.jsx";
+import GalleryPage from "./pages/GalleryPage.jsx";
+import PreviousTreks from "./pages/LoggedInUser/LoggedInComponents/PreviousTreks.jsx";
+import UpcomingTreks from "./pages/LoggedInUser/LoggedInComponents/UpcomingTreks.jsx";
 
 function App() {
   return (
     <AuthProvider>
+      <ScrollToTop/>
       <Routes>
         {/* ✅ Default Redirect */}
         <Route path="/" element={<Navigate to="/landing" replace />} />
@@ -39,10 +45,42 @@ function App() {
           }
         />
         <Route
+          path="/gallery"
+          element={
+            <PrivateRoute>
+              <GalleryPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/previous-treks"
+          element={
+            <PrivateRoute>
+              <PreviousTreks />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/upcoming-treks"
+          element={
+            <PrivateRoute>
+              <UpcomingTreks />
+            </PrivateRoute>
+          }
+        />
+        <Route
           path="/book-trek"
           element={
             <PrivateRoute>
               <BookTrekPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/Profile"
+          element={
+            <PrivateRoute>
+              <Profile />
             </PrivateRoute>
           }
         />

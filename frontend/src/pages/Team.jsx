@@ -62,7 +62,7 @@ export default function Team() {
   return (
     <section id="team" className="py-20 px-6 md:px-16 bg-gray-50 text-center">
       <h2 className="text-3xl font-bold mb-4 text-gray-900">
-        Meet Our <span className="text-blue-500">Hiking Team</span>
+        Meet Our <span className="text-[#68917C]">Hiking Team</span>
       </h2>
       <p className="text-gray-600 mb-12 max-w-2xl mx-auto">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
@@ -109,7 +109,7 @@ export default function Team() {
                     <motion.a
                       variants={iconVariants}
                       href={member.socials.facebook}
-                      className="text-white bg-blue-600 p-3 rounded-full shadow-sm hover:bg-blue-700 transform"
+                      className="text-white bg-[#8B7355] p-3 rounded-full shadow-sm hover:bg-[#68917C] transform"
                     >
                       <FaFacebookF />
                     </motion.a>
@@ -136,7 +136,7 @@ export default function Team() {
               {/* content */}
               <div className="p-6">
                 <h3 className="text-lg font-semibold text-gray-900">{member.name}</h3>
-                <p className="text-blue-500 text-sm font-medium">{member.role}</p>
+                <p className="text-[#68917C] text-sm font-medium">{member.role}</p>
               </div>
             </div>
           );

@@ -94,7 +94,7 @@ const LandingPage = () => {
               initial={{ y: 40, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.7 }}
-              className="text-md md:text-lg text-blue-400 font-semibold tracking-wide"
+              className="text-md md:text-lg text-[#FFFFFF] font-semibold tracking-wide"
             >
               It&apos;s Time to Start Your
             </motion.h2>
@@ -121,7 +121,7 @@ const LandingPage = () => {
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              className="mt-6 px-8 py-3 bg-blue-500 text-white font-bold rounded-full shadow-lg hover:bg-blue-600 transition"
+              className="mt-6 px-8 py-3 bg-[#8B7355] text-white font-bold rounded-full shadow-lg hover:[#68917C] transition"
               onClick={() => {
                 if (user) navigate("/book-trek"); // logged-in → booking page
                 else navigate("/auth/login"); // guest → login page
