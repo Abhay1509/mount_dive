@@ -179,3 +179,27 @@ export const firebaseLogin = async (req, res) => {
     });
   }
 };
+
+// 5️⃣ Update Profile (Protected)
+export const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user._id; // comes from protect() middleware
+
+    const { name, email, phone, dob, gender } = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { name, email, phone, dob, gender },
+      { new: true }
+    ).select("-password");
+
+    res.json({
+      success: true,
+      message: "Profile updated successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("Update Error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
