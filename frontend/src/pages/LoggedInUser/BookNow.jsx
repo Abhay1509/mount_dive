@@ -108,7 +108,7 @@ const BookNow = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("Itinerary");
   const [expandedDay, setExpandedDay] = useState(null);
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const tabs = [
@@ -130,7 +130,7 @@ const BookNow = () => {
   const remainingCount = images.length - visibleThumbnails.length;
   return (
     <>
-      <body className="bg-[#F5F4F0]"></body>
+      <div className="bg-[#F5F4F0]"></div>
       <nav className="fixed top-0 left-0 w-full h-[65px] bg-white/80 backdrop-blur-md z-50 flex items-center justify-between px-4 sm:px-6 md:px-12 shadow-sm">
         {/* Logo */}
         <Link to="/">

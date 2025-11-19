@@ -3,6 +3,7 @@ import { Trash2, Upload, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import axios from "axios";
 
 const Register = () => {
   const [trekkers, setTrekkers] = useState([
@@ -80,10 +81,99 @@ const Register = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  // set your trekId (can be dynamic later)
+  const trekId = "roopkund-2024"; // change accordingly
+
+  // validate all trekkers before sending
+  const validateAll = () => {
+    for (const t of trekkers) {
+      const nameErr = getError(t, "name");
+      const emailErr = getError(t, "email");
+      const ageErr = getError(t, "age");
+      const phoneErr = getError(t, "phone");
+
+      if (nameErr || emailErr || ageErr || phoneErr) {
+        return {
+          ok: false,
+          message: nameErr || emailErr || ageErr || phoneErr,
+        };
+      }
+    }
+    return { ok: true };
+  };
+
+  const handleSubmit = async () => {
+    setSubmitError(null);
+    setSubmitSuccess(false);
+
+    // basic check: user must be logged in
+    if (!user || !user._id) {
+      setSubmitError("You must be logged in to register trekkers.");
+      return;
+    }
+
+    const valid = validateAll();
+    if (!valid.ok) {
+      setSubmitError(valid.message || "Please fix validation errors first.");
+      return;
+    }
+
+    // Build payload (for now we skip file uploads and send only fields)
+    const payload = {
+      userId: user._id, // ensure your Auth user stores _id or change to user.id
+      trekId,
+      trekkers: trekkers.map((t) => ({
+        name: t.name,
+        email: t.email,
+        age: Number(t.age) || null,
+        phone: t.phone,
+        height: t.height ? Number(t.height) : undefined,
+        weight: t.weight ? Number(t.weight) : undefined,
+        medical: t.medical || "No", // if you later add a field
+        // file: optional - not included now
+      })),
+    };
+
+    try {
+      setLoadingSubmit(true);
+
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/trek-registration/register`,
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            // If your backend expects JWT, include it:
+            // Authorization: `Bearer ${user.token}`
+          },
+        }
+      );
+
+      if (res.data && res.data.success) {
+        setSubmitSuccess(true);
+        // optionally navigate to payment page or success page
+        // navigate("/payment", { state: { registration: res.data.data } });
+        // For now show a success and clear or keep data
+      } else {
+        setSubmitError(res.data?.message || "Unexpected server response");
+      }
+    } catch (err) {
+      console.error("Submit error:", err?.response || err);
+      setSubmitError(
+        err.response?.data?.message || err.message || "Failed to submit"
+      );
+    } finally {
+      setLoadingSubmit(false);
+    }
+  };
 
   return (
     <>
-      <body className=" bg-[#F5F4F0]"></body>
+      <div className=" bg-[#F5F4F0]"></div>
       <div className="bg-[#F5F4F0] min-h-screen pb-16">
         {/* Navbar */}
         <nav className="fixed top-0 left-0 w-full h-[65px] bg-white/80 backdrop-blur-md z-50 flex items-center justify-between px-4 sm:px-6 md:px-12 shadow-sm">
@@ -493,13 +583,40 @@ const Register = () => {
 
           {/* Footer Buttons */}
           <div className="flex flex-col sm:flex-row justify-end gap-4 mt-8">
-            <button className="px-6 py-2 border border-gray-400 rounded-md text-gray-700 hover:bg-gray-100">
+            <button
+              className="px-6 py-2 border border-gray-400 rounded-md text-gray-700 hover:bg-gray-100"
+              onClick={() => {
+                // Save for later: store in localStorage
+                localStorage.setItem("savedTrekkers", JSON.stringify(trekkers));
+                alert("Saved locally. You can complete later.");
+              }}
+            >
               Save for Later
             </button>
-            <button className="px-6 py-2 rounded-md bg-[#8F6E56] text-white hover:bg-[#7c5d49]">
-              Proceed to Payment
+
+            <button
+              onClick={handleSubmit}
+              disabled={loadingSubmit}
+              className={`px-6 py-2 rounded-md text-white ${
+                loadingSubmit
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-[#8F6E56] hover:bg-[#7c5d49]"
+              }`}
+            >
+              {loadingSubmit ? "Submitting..." : "Proceed to Payment"}
             </button>
           </div>
+
+          {/* show server error / success */}
+          {submitError && (
+            <p className="text-red-500 mt-3 text-sm">{submitError}</p>
+          )}
+          {submitSuccess && (
+            <p className="text-green-600 mt-3 text-sm">
+              Registration submitted successfully! You'll receive a confirmation
+              shortly.
+            </p>
+          )}
         </div>
       </div>
     </>
