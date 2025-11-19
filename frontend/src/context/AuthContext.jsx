@@ -108,8 +108,17 @@ export const AuthProvider = ({ children }) => {
     window.location.reload();
   };
 
+  // ✅ Update user locally & in localStorage
+  const updateUser = (updatedData) => {
+    setUser((prev) => {
+      const newUser = { ...prev, ...updatedData };
+      localStorage.setItem("userData", JSON.stringify(newUser)); // Sync with localStorage
+      return newUser;
+    });
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, updateUser, loading }}>
       {!loading && children}
     </AuthContext.Provider>
   );

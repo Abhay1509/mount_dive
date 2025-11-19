@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext"; // adjust import path if needed
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-
-
+import axios from "axios";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -63,11 +62,31 @@ const Profile = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSave = () => {
-    if (validate()) {
+  const handleSave = async () => {
+    if (!validate()) return;
+
+    try {
       setIsEditing(false);
-      if (updateUser) updateUser(formData);
-      alert("Profile updated successfully!");
+
+      const res = await axios.put(
+        `${import.meta.env.VITE_API_URL}/api/auth/update-profile`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
+
+      if (res.data.success) {
+        // update context (OPTIONAL)
+        if (updateUser) updateUser(res.data.user);
+
+        alert("Profile updated successfully!");
+      }
+    } catch (error) {
+      console.error("Profile update error:", error);
+      alert(error.response?.data?.message || "Failed to update profile");
     }
   };
 
