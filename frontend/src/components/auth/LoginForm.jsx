@@ -51,10 +51,12 @@ const LoginForm = ({ contactMethod, onSuccess }) => {
           }
         );
 
+        console.log("✅ Login response:", res.data);
+
         // ✅ Force include lowercase email for Firestore role check
         login(res.data.token, {
-          ...res.data.user,
-          email: formData.email.toLowerCase(),
+          ...res.data,
+          email: res.data.email.toLowerCase(),
         });
 
         onSuccess?.(res.data);

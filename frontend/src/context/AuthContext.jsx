@@ -6,13 +6,13 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState({
-  name: "Test User",
-  email: "test@example.com",
-});
-  const [loading, setLoading] = useState(true);
+  //   const [user, setUser] = useState({
+  //   name: "Test User",
+  //   email: "test@example.com",
+  // });
 
-  
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // ✅ Fetch Firestore role when app starts
   useEffect(() => {
@@ -30,7 +30,10 @@ export const AuthProvider = ({ children }) => {
             const userSnap = await getDoc(userRef);
 
             if (!userSnap.exists()) {
-              console.log("⚠️ No Firestore doc found, creating one for:", emailKey);
+              console.log(
+                "⚠️ No Firestore doc found, creating one for:",
+                emailKey
+              );
               await setDoc(userRef, {
                 email: parsedUser.email,
                 role: "user",
@@ -39,7 +42,14 @@ export const AuthProvider = ({ children }) => {
             } else {
               const userDataFromDb = userSnap.data();
               console.log("✅ Firestore user found:", userDataFromDb);
-              setUser({ ...parsedUser, ...userDataFromDb, token });
+              setUser({
+                _id: parsedUser._id,
+                name: parsedUser.name,
+                email: parsedUser.email,
+                isAdmin: parsedUser.isAdmin,
+                role: userDataFromDb.role,
+                token,
+              });
             }
           }
         } else {
@@ -73,7 +83,14 @@ export const AuthProvider = ({ children }) => {
         } else {
           const userDataFromDb = userSnap.data();
           console.log("✅ Found Firestore user:", userDataFromDb);
-          setUser({ ...userData, ...userDataFromDb, token });
+          setUser({
+            _id: userData._id, // <-- ensure backend ID stays
+            name: userData.name,
+            email: userData.email,
+            isAdmin: userData.isAdmin,
+            role: userDataFromDb.role,
+            token,
+          });
         }
       } else {
         setUser(userData || { token });
