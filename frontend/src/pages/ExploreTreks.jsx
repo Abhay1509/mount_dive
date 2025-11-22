@@ -109,7 +109,7 @@ const ExploreTreks = () => {
               >
                 <div className="w-full h-full rounded-2xl overflow-hidden">
                   <img
-                    src={trek.image}
+                    src={trek.images?.[0] || "/placeholder.webp"}
                     alt={trek.title}
                     className="w-full h-full object-cover"
                   />

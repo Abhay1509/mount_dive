@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import {
   ChevronDown,
   ChevronUp,
@@ -18,41 +20,42 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useParams } from "react-router-dom";
 
-const images = [
-  "assets/LandingHeroCarousel/bg4.webp",
-  "assets/LandingHeroCarousel/bg3.webp",
-  "assets/LandingHeroCarousel/bg2.webp",
-  "assets/LandingHeroCarousel/bg1.webp",
-  "assets/LandingHeroCarousel/bg1.webp",
-];
+// const images = [
+//   "assets/LandingHeroCarousel/bg4.webp",
+//   "assets/LandingHeroCarousel/bg3.webp",
+//   "assets/LandingHeroCarousel/bg2.webp",
+//   "assets/LandingHeroCarousel/bg1.webp",
+//   "assets/LandingHeroCarousel/bg1.webp",
+// ];
 
-const itineraryData = [
-  {
-    day: "Day 1 : Manali → Gulaba (drive) → Gulaba Meadows (camp)",
-    details: [
-      "Altitude: Manali – 2,050 m | Gulaba – 3,000 m | Gulaba Meadows – 3,200 m",
-      "Drive Distance: 21 km (~2 hrs)",
-      "Trek Distance: 500 m (20 min)",
-      "Start your journey from Manali, driving along the scenic Rohtang Pass road. Pass quaint hamlets like Kolang, Palchan, and Kothi with the Beas River flowing alongside. (Transport not included)",
-      "Arrive at Gulaba, a picturesque village known for adventure sports like skiing, paragliding, and snow scooters.",
-      "Begin a short trek (1–1.5 hrs) through grasslands and forest lines to reach Gulaba Meadows campsite.",
-      "Evening highlights: witness a stunning sunset, enjoy stargazing under a clear Himalayan sky, and soak in the serenity of the meadows.",
-    ],
-  },
-  {
-    day: "Day 2 : Gulaba → Rola Kholi (camp)",
-    details: ["Beautiful trek through alpine meadows and oak forests."],
-  },
-  {
-    day: "Day 3 : Rola Kholi → Bhrigu Lake → Rola Kholi",
-    details: ["Trek to the sacred Bhrigu Lake and return to camp."],
-  },
-  {
-    day: "Day 4 : Rola Kholi → Gulaba (trek) → Manali (drive)",
-    details: ["Descend back to Gulaba and drive to Manali."],
-  },
-];
+// const itineraryData = [
+//   {
+//     day: "Day 1 : Manali → Gulaba (drive) → Gulaba Meadows (camp)",
+//     details: [
+//       "Altitude: Manali – 2,050 m | Gulaba – 3,000 m | Gulaba Meadows – 3,200 m",
+//       "Drive Distance: 21 km (~2 hrs)",
+//       "Trek Distance: 500 m (20 min)",
+//       "Start your journey from Manali, driving along the scenic Rohtang Pass road. Pass quaint hamlets like Kolang, Palchan, and Kothi with the Beas River flowing alongside. (Transport not included)",
+//       "Arrive at Gulaba, a picturesque village known for adventure sports like skiing, paragliding, and snow scooters.",
+//       "Begin a short trek (1–1.5 hrs) through grasslands and forest lines to reach Gulaba Meadows campsite.",
+//       "Evening highlights: witness a stunning sunset, enjoy stargazing under a clear Himalayan sky, and soak in the serenity of the meadows.",
+//     ],
+//   },
+//   {
+//     day: "Day 2 : Gulaba → Rola Kholi (camp)",
+//     details: ["Beautiful trek through alpine meadows and oak forests."],
+//   },
+//   {
+//     day: "Day 3 : Rola Kholi → Bhrigu Lake → Rola Kholi",
+//     details: ["Trek to the sacred Bhrigu Lake and return to camp."],
+//   },
+//   {
+//     day: "Day 4 : Rola Kholi → Gulaba (trek) → Manali (drive)",
+//     details: ["Descend back to Gulaba and drive to Manali."],
+//   },
+// ];
 
 const termsSections = [
   {
@@ -74,6 +77,36 @@ const termsSections = [
 ];
 
 const BookNow = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const [trek, setTrek] = useState(null);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("Itinerary");
+  const [expandedDay, setExpandedDay] = useState(null);
+  const [showTerms, setShowTerms] = useState(false);
+  const [accepted, setAccepted] = useState(false);
+
+  useEffect(() => {
+    const fetchTrek = async () => {
+      try {
+        const res = await axios.get(`http://localhost:5000/api/treks/${id}`);
+        setTrek(res.data);
+        console.log("Trek data:", res.data);
+      } catch (err) {
+        console.error("Error loading trek:", err);
+      }
+    };
+
+    fetchTrek();
+  }, [id]);
+
+  if (!trek) return <div>Loading...</div>;
+
+  const images = trek?.images || [];
+
   const reviews = [
     {
       name: "Priya Sharma",
@@ -94,8 +127,6 @@ const BookNow = () => {
       reviewNo: "Reviews 3",
     },
   ];
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   const nextImage = () => {
     setSelectedIndex((prev) => (prev + 1) % images.length);
@@ -104,12 +135,6 @@ const BookNow = () => {
   const prevImage = () => {
     setSelectedIndex((prev) => (prev - 1 + images.length) % images.length);
   };
-
-  const [isOpen, setIsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("Itinerary");
-  const [expandedDay, setExpandedDay] = useState(null);
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
 
   const tabs = [
     "Itinerary",
@@ -122,9 +147,6 @@ const BookNow = () => {
   const toggleDay = (index) => {
     setExpandedDay(expandedDay === index ? null : index);
   };
-
-  const [showTerms, setShowTerms] = useState(false);
-  const [accepted, setAccepted] = useState(false);
 
   const visibleThumbnails = images.slice(0, 4);
   const remainingCount = images.length - visibleThumbnails.length;
@@ -461,11 +483,11 @@ const BookNow = () => {
           <div className="bg-[#F3F1EB] rounded-xl p-6 flex flex-col justify-between w-full max-w-[926px] h-[176px] shadow-sm mt-6">
             <div>
               <h2 className="text-2xl font-bold text-[#2B2B2B] font-syne">
-                Trek name
+                {trek?.title}
               </h2>
               <div className="flex items-center text-gray-600 text-sm mt-1">
                 <MapPin size={14} className="mr-1 text-gray-500" />
-                <span>trek location</span>
+                <span>{trek.location}</span>
               </div>
             </div>
 
@@ -496,9 +518,7 @@ const BookNow = () => {
               Description
             </h3>
             <p className="text-sm text-gray-600 leading-relaxed">
-              The Bhrigu Lake Trek, set near Rohtang Pass in Himachal Pradesh,
-              is a mesmerizing mix of alpine beauty, rich mythology, and pure
-              Himalayan adventure. Perched at an altitude of 4,300 meters...
+              {trek?.description}
             </p>
             <button className="text-[rgba(104,145,124,1)] text-sm font-medium mt-1">
               Read more
@@ -511,20 +531,20 @@ const BookNow = () => {
           {/* STATS BLOCKS */}
           <div className="flex flex-wrap mt-6 gap-3">
             <div className="w-full sm:w-[48%] md:w-[223px] h-[100px] bg-[#E5E3DC] rounded-lg flex flex-col justify-center items-center gap-2">
-              <h3 className="text-[#666666] text-sm">DURATION</h3>
-              <p className="text-[#3B3B3B] text-xl font-syne">4 Days</p>
+              <h3 className="text-[#666666] text-sm">Duration</h3>
+              <p className="text-[#3B3B3B] text-xl font-syne">{trek?.duration}</p>
             </div>
             <div className="w-full sm:w-[48%] md:w-[223px] h-[100px] bg-[#E5E3DC] rounded-lg flex flex-col justify-center items-center gap-2">
-              <h3 className="text-[#666666] text-sm">DIFFICULTY</h3>
-              <p className="text-[#3B3B3B] text-xl font-syne">Moderate</p>
+              <h3 className="text-[#666666] text-sm">Difficulty</h3>
+              <p className="text-[#3B3B3B] text-xl font-syne">{trek?.difficulty}</p>
             </div>
             <div className="w-full sm:w-[48%] md:w-[223px] h-[100px] bg-[#E5E3DC] rounded-lg flex flex-col justify-center items-center gap-2">
-              <h3 className="text-[#666666] text-sm">MAX ALTITUDE</h3>
-              <p className="text-[#3B3B3B] text-xl font-syne">14,009 ft</p>
+              <h3 className="text-[#666666] text-sm">Altitude</h3>
+              <p className="text-[#3B3B3B] text-xl font-syne">{trek?.altitude}</p>
             </div>
             <div className="w-full sm:w-[48%] md:w-[223px] h-[100px] bg-[#E5E3DC] rounded-lg flex flex-col justify-center items-center gap-2">
-              <h3 className="text-[#666666] text-sm">BEST SEASON</h3>
-              <p className="text-[#3B3B3B] text-xl font-syne">May - Oct</p>
+              <h3 className="text-[#666666] text-sm">Best Season</h3>
+              <p className="text-[#3B3B3B] text-xl font-syne">{trek?.bestSeason}</p>
             </div>
           </div>
 
@@ -554,7 +574,7 @@ const BookNow = () => {
 
             {activeTab === "Itinerary" && (
               <div className="bg-white p-4 rounded-b-md shadow-sm">
-                {itineraryData.map((item, index) => (
+                {trek?.itinerary?.map((item, index) => (
                   <div
                     key={index}
                     className="border border-gray-200 rounded-md mb-4 overflow-hidden"
@@ -564,6 +584,7 @@ const BookNow = () => {
                       className="w-full flex justify-between items-center px-4 py-3 text-left font-semibold text-[#3B3B3B]"
                     >
                       <span>{item.day}</span>
+
                       {expandedDay === index ? (
                         <ChevronUp className="w-5 h-5 text-gray-600" />
                       ) : (
@@ -825,6 +846,7 @@ const BookNow = () => {
                 </button>
                 <Link
                   to="/Register"
+                  state={{ trek }}
                   className={`px-4 py-2 rounded-md text-white transition ${
                     accepted
                       ? "bg-[#8F6E56] hover:bg-[#7c5d49]"

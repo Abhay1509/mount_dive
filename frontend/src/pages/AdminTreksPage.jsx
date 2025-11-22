@@ -3,20 +3,30 @@ import axios from "axios";
 
 const AdminTreksPage = () => {
   const [treks, setTreks] = useState([]);
+
   const [formData, setFormData] = useState({
     title: "",
-    image: "",
+    type: "",
+    images: [""],
+    location: "",
+    price: "",
+    duration: "",
+    difficulty: "",
+    altitude: "",
+    bestSeason: "",
     description: "",
+    itinerary: [{ day: "", details: [""] }],
   });
+
   const [editingId, setEditingId] = useState(null);
 
-  // ✅ Fetch treks from backend
+  // Fetch all treks
   const fetchTreks = async () => {
     try {
       const res = await axios.get("http://localhost:5000/api/treks");
       setTreks(res.data);
-    } catch (error) {
-      console.error("Error fetching treks:", error);
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -24,146 +34,356 @@ const AdminTreksPage = () => {
     fetchTreks();
   }, []);
 
-  // ✅ Handle input
+  // Handle basic input fields
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // ✅ Add or update trek
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      if (editingId) {
-        await axios.put(`http://localhost:5000/api/treks/${editingId}`, formData);
-      } else {
-        await axios.post("http://localhost:5000/api/treks", formData);
-      }
-      setFormData({ title: "", image: "", description: "" });
-      setEditingId(null);
-      fetchTreks();
-    } catch (error) {
-      console.error("Error saving trek:", error);
-    }
+  // Handle images
+  const handleImageChange = (index, value) => {
+    const updated = [...formData.images];
+    updated[index] = value;
+    setFormData({ ...formData, images: updated });
   };
 
-  // ✅ Edit trek
-  const handleEdit = (trek) => {
-    setEditingId(trek._id);
+  const addImageField = () => {
+    setFormData({ ...formData, images: [...formData.images, ""] });
+  };
+
+  const removeImageField = (index) => {
+    const updated = formData.images.filter((_, i) => i !== index);
+    setFormData({ ...formData, images: updated });
+  };
+
+  // Handle itinerary days
+  const addItineraryDay = () => {
     setFormData({
-      title: trek.title,
-      image: trek.image,
-      description: trek.description,
+      ...formData,
+      itinerary: [...formData.itinerary, { day: "", details: [""] }],
     });
   };
 
-  // ✅ Delete trek
+  const handleItineraryChange = (index, field, value) => {
+    const updated = [...formData.itinerary];
+    updated[index][field] = value;
+    setFormData({ ...formData, itinerary: updated });
+  };
+
+  // Handle itinerary details
+  const addDetail = (dayIndex) => {
+    const updated = [...formData.itinerary];
+    updated[dayIndex].details.push("");
+    setFormData({ ...formData, itinerary: updated });
+  };
+
+  const handleDetailChange = (dayIndex, detailIndex, value) => {
+    const updated = [...formData.itinerary];
+    updated[dayIndex].details[detailIndex] = value;
+    setFormData({ ...formData, itinerary: updated });
+  };
+
+  // CLEAN + SUBMIT
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // CLEAN IMAGES (remove empty strings)
+    const cleanImages = formData.images.filter(
+      (img) => img && img.trim() !== ""
+    );
+
+    // CLEAN ITINERARY
+    const cleanItinerary = formData.itinerary
+      .filter((day) => day.day.trim() !== "") // no empty day title
+      .map((day) => ({
+        day: day.day.trim(),
+        details: day.details.filter((d) => d.trim() !== ""), // no empty details
+      }))
+      .filter((day) => day.details.length > 0); // ensure at least 1 detail
+
+    const payload = {
+      ...formData,
+      images: cleanImages,
+      itinerary: cleanItinerary,
+    };
+
+    try {
+      if (editingId) {
+        await axios.put(
+          `http://localhost:5000/api/treks/${editingId}`,
+          payload
+        );
+      } else {
+        await axios.post("http://localhost:5000/api/treks", payload);
+      }
+
+      resetForm();
+      setEditingId(null);
+      fetchTreks();
+    } catch (err) {
+      console.error("Save error:", err);
+      alert("Failed — open console for details!");
+    }
+  };
+
+  // Reset form to empty
+  const resetForm = () => {
+    setFormData({
+      title: "",
+      type: "",
+      images: [""],
+      location: "",
+      price: "",
+      duration: "",
+      difficulty: "",
+      altitude: "",
+      bestSeason: "",
+      description: "",
+      itinerary: [{ day: "", details: [""] }],
+    });
+  };
+
+  // Load trek in edit mode safely
+  const handleEdit = (trek) => {
+    setEditingId(trek._id);
+    setFormData({
+      ...trek,
+      images:
+        trek.images && trek.images.length > 0 ? trek.images : [""],
+      itinerary:
+        trek.itinerary && trek.itinerary.length > 0
+          ? trek.itinerary.map((d) => ({
+              day: d.day || "",
+              details:
+                d.details && d.details.length > 0 ? d.details : [""],
+            }))
+          : [{ day: "", details: [""] }],
+    });
+  };
+
+  // Delete trek
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this trek?")) {
-      try {
-        await axios.delete(`http://localhost:5000/api/treks/${id}`);
-        fetchTreks();
-      } catch (error) {
-        console.error("Error deleting trek:", error);
-      }
+      await axios.delete(`http://localhost:5000/api/treks/${id}`);
+      fetchTreks();
     }
   };
 
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">
-        🧭 Admin Trek Management
+      <h1 className="text-3xl font-bold text-center mb-6">
+        Admin Trek Manager
       </h1>
 
-      {/* Form Section */}
+      {/* FORM */}
       <form
         onSubmit={handleSubmit}
-        className="bg-white shadow-md rounded-xl p-6 max-w-xl mx-auto mb-10"
+        className="bg-white shadow-lg p-6 rounded-xl max-w-3xl mx-auto"
       >
-        <h2 className="text-xl font-semibold mb-4 text-gray-700">
-          {editingId ? "Edit Trek" : "Add New Trek"}
+        <h2 className="text-xl font-semibold mb-4">
+          {editingId ? "Edit Trek" : "Add Trek"}
         </h2>
 
-        <div className="space-y-4">
+        {/* BASIC INPUTS */}
+        <div className="grid grid-cols-2 gap-4">
           <input
-            type="text"
             name="title"
-            placeholder="Trek Title"
             value={formData.title}
             onChange={handleChange}
-            className="w-full border p-3 rounded-md focus:outline-blue-500"
+            placeholder="Title"
+            className="border p-2 rounded"
             required
           />
 
           <input
-            type="text"
-            name="image"
-            placeholder="Image URL"
-            value={formData.image}
+            name="type"
+            value={formData.type}
             onChange={handleChange}
-            className="w-full border p-3 rounded-md focus:outline-blue-500"
+            placeholder="Type (Hiking/Trekking)"
+            className="border p-2 rounded"
             required
           />
 
-          <textarea
-            name="description"
-            placeholder="Description"
-            value={formData.description}
+          <input
+            name="location"
+            value={formData.location}
             onChange={handleChange}
-            rows="3"
-            className="w-full border p-3 rounded-md focus:outline-blue-500"
-          ></textarea>
+            placeholder="Location"
+            className="border p-2 rounded"
+            required
+          />
 
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
-          >
-            {editingId ? "Update Trek" : "Add Trek"}
-          </button>
+          <input
+            name="price"
+            value={formData.price}
+            onChange={handleChange}
+            placeholder="Price"
+            type="number"
+            className="border p-2 rounded"
+            required
+          />
+
+          <input
+            name="duration"
+            value={formData.duration}
+            onChange={handleChange}
+            placeholder="Duration"
+            className="border p-2 rounded"
+            required
+          />
+
+          <input
+            name="difficulty"
+            value={formData.difficulty}
+            onChange={handleChange}
+            placeholder="Difficulty"
+            className="border p-2 rounded"
+            required
+          />
+
+          <input
+            name="altitude"
+            value={formData.altitude}
+            onChange={handleChange}
+            placeholder="Altitude"
+            className="border p-2 rounded"
+            required
+          />
+
+          <input
+            name="bestSeason"
+            value={formData.bestSeason}
+            onChange={handleChange}
+            placeholder="Best Season"
+            className="border p-2 rounded"
+            required
+          />
         </div>
+
+        {/* DESCRIPTION */}
+        <textarea
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+          placeholder="Description"
+          className="w-full border p-3 rounded mt-4"
+          required
+        />
+
+        {/* IMAGES */}
+        <h3 className="font-semibold mt-4">Images</h3>
+
+        {formData.images.map((img, i) => (
+          <div key={i} className="flex gap-2 mt-2">
+            <input
+              value={img}
+              onChange={(e) => handleImageChange(i, e.target.value)}
+              placeholder="Image URL"
+              className="border p-2 rounded w-full"
+            />
+
+            {i > 0 && (
+              <button
+                type="button"
+                onClick={() => removeImageField(i)}
+                className="bg-red-500 text-white px-3 rounded"
+              >
+                X
+              </button>
+            )}
+          </div>
+        ))}
+
+        <button
+          type="button"
+          onClick={addImageField}
+          className="mt-2 text-blue-600"
+        >
+          + Add Image
+        </button>
+
+        {/* ITINERARY */}
+        <h3 className="font-semibold mt-6">Itinerary</h3>
+
+        {formData.itinerary.map((day, index) => (
+          <div key={index} className="border p-4 rounded mt-2 bg-gray-100">
+            <input
+              value={day.day}
+              onChange={(e) =>
+                handleItineraryChange(index, "day", e.target.value)
+              }
+              placeholder="Day Title"
+              className="border p-2 rounded w-full mb-2"
+            />
+
+            {day.details.map((detail, i) => (
+              <input
+                key={i}
+                value={detail}
+                onChange={(e) =>
+                  handleDetailChange(index, i, e.target.value)
+                }
+                placeholder="Detail"
+                className="border p-2 rounded w-full mt-1"
+              />
+            ))}
+
+            <button
+              type="button"
+              onClick={() => addDetail(index)}
+              className="text-blue-600 mt-2"
+            >
+              + Add Detail
+            </button>
+          </div>
+        ))}
+
+        <button
+          type="button"
+          onClick={addItineraryDay}
+          className="text-green-600 mt-3"
+        >
+          + Add Itinerary Day
+        </button>
+
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-3 rounded mt-6"
+        >
+          {editingId ? "Update Trek" : "Add Trek"}
+        </button>
       </form>
 
-      {/* Treks List */}
-      <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-6">
-        {treks.length === 0 ? (
-          <p className="text-center text-gray-600 col-span-full">
-            No treks found.
-          </p>
-        ) : (
-          treks.map((trek) => (
-            <div
-              key={trek._id}
-              className="bg-white shadow-md rounded-xl overflow-hidden"
-            >
-              <img
-                src={trek.image}
-                alt={trek.title}
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-4">
-                <h3 className="font-semibold text-lg text-gray-800">
-                  {trek.title}
-                </h3>
-                <p className="text-gray-600 text-sm mt-2 line-clamp-3">
-                  {trek.description}
-                </p>
-                <div className="flex justify-between mt-4">
-                  <button
-                    onClick={() => handleEdit(trek)}
-                    className="px-3 py-1 bg-yellow-500 text-white rounded-md hover:bg-yellow-600"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(trek._id)}
-                    className="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
+      {/* TREKS LIST */}
+      <h2 className="text-2xl font-bold mt-10 mb-4">All Treks</h2>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {treks.map((t) => (
+          <div key={t._id} className="bg-white p-4 shadow rounded-lg">
+            <img
+              src={t.images?.[0]}
+              className="h-40 w-full object-cover rounded"
+            />
+
+            <h3 className="font-bold mt-2">{t.title}</h3>
+            <p className="text-gray-600 text-sm">{t.location}</p>
+
+            <div className="flex justify-between mt-3">
+              <button
+                onClick={() => handleEdit(t)}
+                className="bg-yellow-500 text-white px-3 py-1 rounded"
+              >
+                Edit
+              </button>
+
+              <button
+                onClick={() => handleDelete(t._id)}
+                className="bg-red-500 text-white px-3 py-1 rounded"
+              >
+                Delete
+              </button>
             </div>
-          ))
-        )}
+          </div>
+        ))}
       </div>
     </div>
   );

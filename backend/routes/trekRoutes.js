@@ -4,13 +4,12 @@ import Trek from "../models/Trek.js";
 const router = express.Router();
 
 /* ============================================================
-   @desc    Get all treks
+   GET ALL TREKS
    @route   GET /api/treks
-   @access  Public
 ============================================================ */
 router.get("/", async (req, res) => {
   try {
-    const treks = await Trek.find().sort({ createdAt: -1 }); // newest first
+    const treks = await Trek.find().sort({ createdAt: -1 });
     res.status(200).json(treks);
   } catch (error) {
     console.error("❌ Error fetching treks:", error);
@@ -19,39 +18,56 @@ router.get("/", async (req, res) => {
 });
 
 /* ============================================================
-   @desc    Add a new trek
-   @route   POST /api/treks
-   @access  Admin (for now, open)
+   GET SINGLE TREK
+   @route   GET /api/treks/:id
 ============================================================ */
-router.post("/", async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
-    const { title, image, description } = req.body;
+    const trek = await Trek.findById(req.params.id);
 
-    if (!title || !image) {
-      return res.status(400).json({ message: "Title and image are required" });
+    if (!trek) {
+      return res.status(404).json({ message: "Trek not found" });
     }
 
-    const newTrek = new Trek({ title, image, description });
-    const savedTrek = await newTrek.save();
-
-    res.status(201).json(savedTrek);
+    res.status(200).json(trek);
   } catch (error) {
-    console.error("❌ Error creating trek:", error);
+    console.error("❌ Error fetching trek:", error);
     res.status(500).json({ message: "Server Error" });
   }
 });
 
 /* ============================================================
-   @desc    Update a trek
+   ADD TREK
+   @route   POST /api/treks
+============================================================ */
+router.post("/", async (req, res) => {
+  try {
+  //  console.log("📥 Incoming Trek Data:", req.body);  // Debug log
+
+    const trek = new Trek(req.body);   // Let mongoose handle validation
+    const saved = await trek.save();
+
+    res.status(201).json(saved);
+  } catch (error) {
+    console.error("❌ Validation Error:", error); // Full error log
+
+    return res.status(400).json({
+      message: "Validation failed",
+      errors: error.errors,
+    });
+  }
+});
+
+
+/* ============================================================
+   UPDATE TREK
    @route   PUT /api/treks/:id
-   @access  Admin
 ============================================================ */
 router.put("/:id", async (req, res) => {
   try {
-    const { title, image, description } = req.body;
     const updatedTrek = await Trek.findByIdAndUpdate(
       req.params.id,
-      { title, image, description },
+      { ...req.body },
       { new: true, runValidators: true }
     );
 
@@ -67,9 +83,8 @@ router.put("/:id", async (req, res) => {
 });
 
 /* ============================================================
-   @desc    Delete a trek
+   DELETE TREK
    @route   DELETE /api/treks/:id
-   @access  Admin
 ============================================================ */
 router.delete("/:id", async (req, res) => {
   try {

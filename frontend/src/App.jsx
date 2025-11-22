@@ -17,7 +17,7 @@ import UpcomingTreks from "./pages/LoggedInUser/LoggedInComponents/UpcomingTreks
 function App() {
   return (
     <AuthProvider>
-      <ScrollToTop/>
+      <ScrollToTop />
       <Routes>
         {/* ✅ Default Redirect */}
         <Route path="/" element={<Navigate to="/landing" replace />} />
@@ -28,14 +28,7 @@ function App() {
         <Route path="/about" element={<About />} />
 
         {/* ✅ Protected User Routes */}
-        <Route
-          path="/booknow"
-          element={
-            <PrivateRoute>
-              <BookNow />
-            </PrivateRoute>
-          }
-        />
+
         <Route
           path="/register"
           element={
@@ -73,6 +66,14 @@ function App() {
           element={
             <PrivateRoute>
               <BookTrekPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/book-now/:id"
+          element={
+            <PrivateRoute>
+              <BookNow />
             </PrivateRoute>
           }
         />
