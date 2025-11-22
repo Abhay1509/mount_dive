@@ -1,11 +1,16 @@
 import React, { useState } from "react";
 import { Trash2, Upload, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
 
 const Register = () => {
+  const location = useLocation();
+  const trek = location.state?.trek;
+
+  if (!trek) return <div>No Trek Selected</div>;
+
   const [trekkers, setTrekkers] = useState([
     { id: 1, name: "", email: "", age: "", phone: "", height: "", weight: "" },
   ]);
@@ -400,23 +405,21 @@ const Register = () => {
           {/* Trek Info Header */}
           <div className="mb-8">
             <h1 className="text-2xl font-bold text-[#3B3B3B] mb-2">
-              Roopkund Trek
+              {trek.title}
             </h1>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 text-sm text-gray-700">
               <p>
-                <span className="font-semibold">Location:</span> Uttarakhand
+                <span className="font-semibold">Location:</span> {trek.location}
               </p>
               <p>
-                <span className="font-semibold">Duration:</span> 8 Days / 7
-                Nights
+                <span className="font-semibold">Duration:</span> {trek.duration}
               </p>
               <p>
-                <span className="font-semibold">Dates:</span> 15th Oct - 22nd
-                Oct 2024
+                <span className="font-semibold">Dates:</span> {trek.dates}
               </p>
               <p>
-                <span className="font-semibold">Difficulty:</span> Moderate to
-                Difficult
+                <span className="font-semibold">Difficulty:</span>{" "}
+                {trek.difficulty}
               </p>
             </div>
           </div>

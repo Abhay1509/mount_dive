@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 import Card from "./LoggedInComponents/Card";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-
+import axios from "axios";
 
 const slides = [
   {
@@ -82,107 +82,6 @@ const slides = [
   },
 ];
 
-const cardsData = [
-  {
-    type: "Hiking",
-    title: "MANALI MOUNTAIN TREKS",
-    price: "60000",
-    time: "6 days.5 night",
-    image: "assets/LandingHeroCarousel/bg2.webp",
-    description:
-      "The classic Manali trek experience which offers scenic beauty and adventure.",
-  },
-  {
-    type: "Hiking",
-    title: "MANALI MOUNTAIN TREKS",
-    price: "4000",
-    time: "6 days.5 night",
-    image: "assets/LandingHeroCarousel/bg4.webp",
-    description:
-      "The classic Manali trek experience which offers scenic beauty and adventure.",
-  },
-  {
-    type: "Hiking",
-    title: "MANALI MOUNTAIN TREKS",
-    price: "10000",
-    time: "6 days.5 night",
-    image: "assets/LandingHeroCarousel/bg3.webp",
-    description:
-      "The classic Manali trek experience which offers scenic beauty and adventure.",
-  },
-  {
-    type: "Mountaineering",
-    title: "MANALI MOUNTAIN TREKS",
-    price: "10000",
-    time: "6 days.5 night",
-    image: "assets/LandingHeroCarousel/bg1.webp",
-    description:
-      "The classic Manali trek experience which offers scenic beauty and adventure.",
-  },
-  {
-    type: "Mountaineering",
-    title: "MANALI MOUNTAIN TREKS",
-    price: "8999",
-    time: "6 days.5 night",
-    image: "/img.jpg",
-    description:
-      "The classic Manali trek experience which offers scenic beauty and adventure.",
-  },
-  {
-    type: "Mountaineering",
-    title: "MANALI MOUNTAIN TREKS",
-    price: "10000",
-    time: "6 days.5 night",
-    image: "/img.jpg",
-    description:
-      "The classic Manali trek experience which offers scenic beauty and adventure.",
-  },
-  {
-    type: "Mountaineering",
-    title: "MANALI MOUNTAIN TREKS",
-    price: "1000",
-    time: "6 days.5 night",
-    image: "/img.jpg",
-    description:
-      "The classic Manali trek experience which offers scenic beauty and adventure.",
-  },
-  {
-    type: "Mountaineering",
-    title: "MANALI MOUNTAIN TREKS",
-    price: "100",
-    time: "6 days.5 night",
-    image: "/img.jpg",
-    description:
-      "The classic Manali trek experience which offers scenic beauty and adventure.",
-  },
-  {
-    type: "Trekking",
-    title: "MANALI MOUNTAIN TREKS",
-    price: "10000",
-    time: "6 days.5 night",
-    image: "/img.jpg",
-    description:
-      "The classic Manali trek experience which offers scenic beauty and adventure.",
-  },
-  {
-    type: "Trekking",
-    title: "MANALI MOUNTAIN TREKS",
-    price: "10000",
-    time: "6 days.5 night",
-    image: "/img.jpg",
-    description:
-      "The classic Manali trek experience which offers scenic beauty and adventure.",
-  },
-  {
-    type: "Camping",
-    title: "MANALI MOUNTAIN TREKS",
-    price: "10000",
-    time: "6 days.5 night",
-    image: "/img.jpg",
-    description:
-      "The classic Manali trek experience which offers scenic beauty and adventure.",
-  },
-];
 
 const BookTrekPage = () => {
   const { user, logout } = useAuth();
@@ -190,17 +89,35 @@ const BookTrekPage = () => {
   const [selectedType, setSelectedType] = useState("All");
   const [maxPrice, setMaxPrice] = useState(50000);
 
-  const cards = useMemo(() => cardsData, []);
+  const [treks, setTreks] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const cards = useMemo(() => treks, [treks]);
   const deferredType = useDeferredValue(selectedType);
   const deferredMaxPrice = useDeferredValue(maxPrice);
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchTreks = async () => {
+      try {
+        const res = await axios.get("http://localhost:5000/api/treks");
+        setTreks(res.data);
+      } catch (err) {
+        console.error("Error fetching treks:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTreks();
+  }, []);
 
   const filteredCards = useMemo(() => {
     return cards.filter((card) => {
       const matchesType =
         deferredType === "All" ||
         card.type.toLowerCase() === deferredType.toLowerCase();
-      const matchesPrice = card.price <= deferredMaxPrice;
+      const matchesPrice = Number(card.price) <= deferredMaxPrice;
       return matchesType && matchesPrice;
     });
   }, [cards, deferredType, deferredMaxPrice]);
@@ -654,7 +571,6 @@ const BookTrekPage = () => {
       `}</style>
       </div>
       <div className="relative w-full flex flex-col py-10">
-
         <div
           className="fixed inset-0 z-[-1] bg-cover bg-top"
           style={{
@@ -663,7 +579,7 @@ const BookTrekPage = () => {
         >
           <div className="absolute inset-0 bg-gradient-to-b from-white via-[#8F6E56] to-[#8F6E56] opacity-80" />
         </div>
-       
+
         <div className="text-center mt-20 flex flex-col justify-center items-center">
           <h1 className="font-syne font-bold text-[48px] text-black/70 uppercase">
             UNIQUE TRAVEL EXPERIENCE
@@ -673,14 +589,12 @@ const BookTrekPage = () => {
             services
           </p>
         </div>
-   
+
         <div className="w-full max-w-7xl mx-auto flex flex-col lg:flex-row gap-14 mb-20 pt-10">
-     
           <div className="hidden lg:block lg:w-[256px]">
             <div className="sticky top-[100px] bg-white border border-gray-200 rounded-xl p-4 shadow-sm font-syne text-[#3B3B3B] h-fit">
               <h2 className="text-lg font-semibold mb-4">Filters</h2>
 
-     
               <div className="mb-6">
                 <label className="block text-sm font-medium mb-2">
                   Date Range
@@ -691,7 +605,6 @@ const BookTrekPage = () => {
                 </button>
               </div>
 
-             
               <div className="mb-6">
                 <label className="block text-sm font-medium mb-3">
                   Budget Range
@@ -738,11 +651,12 @@ const BookTrekPage = () => {
             {filteredCards.length > 0 ? (
               filteredCards.map((card, idx) => (
                 <Card
-                  key={idx}
+                  key={card._id}
+                  id={card._id}
                   title={card.title}
                   price={card.price}
-                  time={card.time}
-                  image={card.image}
+                  time={card.duration}
+                  image={card.images?.[0]} // first image
                   description={card.description}
                 />
               ))
