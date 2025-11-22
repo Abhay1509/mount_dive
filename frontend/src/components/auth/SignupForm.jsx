@@ -28,29 +28,26 @@ const SignupForm = ({ contactMethod, onSuccess }) => {
   );
 
   // Setup reCAPTCHA
-  useEffect(() => {
-    if (!window.recaptchaVerifier) {
-      window.recaptchaVerifier = new RecaptchaVerifier(
-        auth,
-        "recaptcha-container",
-        {
-          size: "invisible",
-          callback: (response) => {
-            console.log("✅ reCAPTCHA verified:", response);
-          },
-          "expired-callback": () => {
-            console.warn("⚠️ reCAPTCHA expired, resetting...");
-          },
-        }
-      );
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!window.recaptchaVerifier) {
+  //     window.recaptchaVerifier = new RecaptchaVerifier(
+  //       auth,
+  //       "recaptcha-container",
+  //       {
+  //         size: "invisible",
+  //         callback: (response) => {
+  //           console.log("✅ reCAPTCHA verified:", response);
+  //         },
+  //         "expired-callback": () => {
+  //           console.warn("⚠️ reCAPTCHA expired, resetting...");
+  //         },
+  //       }
+  //     );
+  //   }
+  // }, []);
 
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
-<<<<<<< Updated upstream
-    setFormData((prev) => ({ ...prev, [name]: value }));
-=======
     let newValue = value;
 
     if (name === "fullName") {
@@ -58,7 +55,6 @@ const SignupForm = ({ contactMethod, onSuccess }) => {
     }
 
     setFormData((prev) => ({ ...prev, [name]: newValue }));
->>>>>>> Stashed changes
     setErrors((prev) => ({ ...prev, [name]: "" }));
   }, []);
 
@@ -249,148 +245,6 @@ const SignupForm = ({ contactMethod, onSuccess }) => {
   };
 
   return (
-<<<<<<< Updated upstream
-    <>
-      <form
-        className="space-y-4"
-        onSubmit={otpSent ? handleVerifyOtp : handleSubmit}
-      >
-        {/* <div id="recaptcha-container"></div> */}
-        {!otpSent ? (
-          <>
-            <input
-              type="text"
-              name="fullName"
-              value={formData.fullName}
-              onChange={handleChange}
-              placeholder="Full Name"
-              className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
-              required
-            />
-
-            {contactMethod === "email" ? (
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Email address"
-                className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
-                required
-              />
-            ) : (
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  name="countryCode"
-                  value={formData.countryCode}
-                  onChange={handleChange}
-                  className="w-20 px-2 py-2 border rounded-md focus:ring-2 focus:ring-blue-400 text-center"
-                />
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  placeholder="Phone number"
-                  className="flex-1 px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
-                  required
-                />
-              </div>
-            )}
-
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Password"
-                className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((s) => !s)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-              >
-                {showPassword ? "🙈" : "👁"}
-              </button>
-            </div>
-
-            <input
-              type="password"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              placeholder="Confirm Password"
-              className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
-              required
-            />
-
-            {errors.general && (
-              <p className="text-red-500 text-sm">{errors.general}</p>
-            )}
-
-            <button
-              type="submit"
-              className="w-full bg-black text-white py-2 rounded-md hover:opacity-95 transition disabled:opacity-60"
-              disabled={loading}
-            >
-              {loading ? "Sending OTP..." : "Send OTP"}
-            </button>
-          </>
-        ) : (
-          <>
-            <input
-              type="text"
-              inputMode="numeric"
-              maxLength={6}
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-              placeholder="Enter OTP"
-              className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400 tracking-widest text-center"
-              required
-            />
-
-            {errors.general && (
-              <p className="text-red-500 text-sm">{errors.general}</p>
-            )}
-
-            <button
-              type="submit"
-              className="w-full bg-green-600 text-white py-2 rounded-md hover:opacity-95 transition disabled:opacity-60"
-              disabled={loading}
-            >
-              {loading ? "Verifying..." : "Verify OTP"}
-            </button>
-
-            <div className="text-center text-sm text-gray-600">
-              {resendTimer > 0 ? (
-                <p>
-                  Resend OTP in{" "}
-                  <span className="font-semibold text-gray-800">
-                    {resendTimer}s
-                  </span>
-                </p>
-              ) : (
-                <button
-                  type="button"
-                  onClick={handleResendOtp}
-                  className="text-blue-600 hover:underline"
-                  disabled={loading}
-                >
-                  Resend OTP
-                </button>
-              )}
-            </div>
-          </>
-        )}
-      </form>
-
-      <div id="recaptcha-container" style={{ display: "none" }}></div>
-    </>
-=======
     <form className="space-y-3.5 mt-10 relative" onSubmit={handleSubmit}>
       {/* Full Name */}
       <img
@@ -526,7 +380,6 @@ const SignupForm = ({ contactMethod, onSuccess }) => {
         </button>
       )}
     </form>
->>>>>>> Stashed changes
   );
 };
 

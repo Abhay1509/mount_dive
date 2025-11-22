@@ -72,7 +72,7 @@ const LoginForm = ({ contactMethod, onSuccess }) => {
     <form className="space-y-4" onSubmit={handleSubmit}>
       {contactMethod === "email" ? (
         <>
-        <img src="/mail.svg" className=" h-[20px] w-[20px] absolute top-[57px] left-2 " alt="" />
+        <img src="/mail.svg" className=" h-[20px] w-[20px] absolute top-[97px] left-2 " alt="" />
           <input
             type="email"
             name="email"
@@ -110,7 +110,7 @@ const LoginForm = ({ contactMethod, onSuccess }) => {
         </>
       ) : (
         <>
-        <img src="/mail.svg" className=" h-[20px] w-[20px] absolute top-[57px] left-1 " alt="" />
+        <img src="/mail.svg" className=" h-[20px] w-[20px] absolute top-[97px] left-1 " alt="" />
         <input
           type="tel"
           name="phone"
@@ -123,28 +123,6 @@ const LoginForm = ({ contactMethod, onSuccess }) => {
           </>
       )}
 
-<<<<<<< Updated upstream
-      <div className="relative">
-        <input
-          type={showPassword ? "text" : "password"}
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          placeholder="Password"
-          className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
-          required
-        />
-        <button
-          type="button"
-          onClick={() => setShowPassword((s) => !s)}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-        >
-          {showPassword ? "Hide" : "Show"}
-        </button>
-      </div>
-
-=======
->>>>>>> Stashed changes
       {error && <p className="text-red-500 text-sm">{error}</p>}
 
       <button
@@ -163,10 +141,7 @@ const LoginForm = ({ contactMethod, onSuccess }) => {
           : "Send OTP"}
       </button>
 
-<<<<<<< Updated upstream
-=======
       {/* Optional UX improvement
->>>>>>> Stashed changes
       <div className="text-right">
         <button
           type="button"

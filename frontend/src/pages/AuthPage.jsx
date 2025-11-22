@@ -15,12 +15,6 @@ const AuthPage = () => {
   const [contactMethod, setContactMethod] = useState("email");
   const [currentMode, setCurrentMode] = useState(mode); // Track mode for rendering
 
-<<<<<<< Updated upstream
-  const { login } = useAuth();
-
-  // ✅ Use correct asset paths (no /public prefix)
-=======
->>>>>>> Stashed changes
   const images = [
     {
       src: "/assets/hero_img_1.jpg",
@@ -120,35 +114,9 @@ const AuthPage = () => {
           </div>
         </div>
 
-<<<<<<< Updated upstream
-        {/* Form with transition */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentMode}
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.3 }}
-            className="w-full max-w-md mx-auto"
-          >
-            <FormComponent
-              contactMethod={contactMethod}
-              onSuccess={(data) => {
-                // ✅ Save user session instantly
-                if (data?.token) login(data.token, data.user);
-                navigate(current.redirect);
-              }}
-            />
-
-            <p className="text-sm text-center text-gray-600 mt-4">
-              {current.linkText}{" "}
-              <button
-                onClick={() => goToAuth(current.linkTo)}
-                className="text-blue-600 underline"
-=======
         <div className="relative">
           {/* Title with animation */}
-          <div className="sign relative h-[30px] w-[100px]">
+          <div className="sign relative h-[30px] mt-10 w-[100px]">
             <AnimatePresence mode="wait">
               <motion.h3
                 key={currentMode}
@@ -159,7 +127,6 @@ const AuthPage = () => {
                 className={`text-xl font-syne font-semibold text-gray-800 ${
                   currentMode === "login" ? "mb-2" : "mb-4"
                 }`}
->>>>>>> Stashed changes
               >
                 {current.title}
               </motion.h3>
@@ -194,7 +161,7 @@ const AuthPage = () => {
           </AnimatePresence>
 
           <div className="font-syne py-2 text-[10px] gap-[130px] text-[#5300305C]">
-            --------------------------------OR------------------------------
+            ----------------------------------------------OR-------------------------------------------
           </div>
 
           <div className="gap-8 h-[36px] w-full flex justify-center items-center">

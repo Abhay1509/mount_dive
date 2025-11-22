@@ -1,10 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-<<<<<<< Updated upstream
-import { useAuth } from "../context/AuthContext";
-=======
 import SearchSidebar from "./Search";
->>>>>>> Stashed changes
+import { useAuth } from "../context/AuthContext";
 
 const HeroNavbar = () => {
   const navigate = useNavigate();
