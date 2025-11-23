@@ -6,11 +6,11 @@ import BookNow from "../BookNow";
 const Card = memo(({ title, price, time, image, description }) => {
   return (
     <div
-      className="bg-white rounded-[50px] shadow-2xl overflow-hidden transition-transform transform hover:-translate-y-2 hover:shadow-3xl 
-      h-[468px] w-[450px] flex flex-col justify-center items-center hover:cursor-pointer"
+      className="bg-white rounded-[15px] shadow-2xl overflow-hidden transition-transform transform hover:-translate-y-2 hover:shadow-3xl 
+      h-[468px] w-[310px] flex flex-col justify-center items-center hover:cursor-pointer"
     >
       {/* ✅ Image - Lazy loaded + object-cover for stable layout */}
-      <div className="h-[240px] w-[380px] rounded-[30px] overflow-hidden bg-gray-200 mt-[30px]">
+      <div className="h-[200px] w-[380px] rounded-[10px] overflow-hidden bg-gray-200 ">
         <img
           src={image}
           alt={title}
@@ -21,7 +21,7 @@ const Card = memo(({ title, price, time, image, description }) => {
       </div>
 
       {/* ✅ Card Content */}
-      <div className="p-3 text-center flex flex-col justify-center items-center">
+      <div className="p-3 mx-4  flex flex-col justify-center ">
         <h2 className="h-[21px] w-[290px] font-syne text-[20px] font-semibold text-gray-800 truncate">
           {title}
         </h2>
@@ -42,15 +42,15 @@ const Card = memo(({ title, price, time, image, description }) => {
           {description}
         </p>
 
-        <div className="mt-3 flex flex-col items-center">
-          <p className="font-bold mb-4 text-[20px] text-black">INR {price}/Person</p>
+        <div className="mt-3 flex flex-col ">
+          <p className="font-bold mb-4 font-syne text-[20px] text-black">INR {price}/Person</p>
 
           {/* ✅ Use Link with prefetch behavior for faster route transitions */}
           <Link
             to="/BookNow"
             prefetch="intent"
             className="bg-[rgba(143,110,86,1)] h-[40px] hover:bg-[#4b301c] font-semibold py-2 px-5 rounded-lg flex justify-center items-center gap-2 
-            text-[rgba(255,255,255,1)] mb-3 z-10 transition-all duration-300"
+            text-[rgba(255,255,255,1)] mb-3 z-10 transition-all duration-300 font-syne"
           >
             <img
               src="/SVG/inquire.svg"

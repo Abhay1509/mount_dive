@@ -17,7 +17,7 @@ const slides = [
   {
     title: "Mountain",
     name: "Kings",
-    image: "assets/LandingHeroCarousel/bg2.webp",
+    image: "/assets/LandingHeroCarousel/bg2.webp",
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique consequuntur sapiente molestiae a deserunt earum ipsam aliquam, harum vitae, quae distinctio nihil. Consequatur?",
   },
   {
@@ -41,43 +41,43 @@ const slides = [
   {
     title: "SLIDER",
     name: "Tehran",
-    image: "/img3.jpg",
+    image: "/assets/LandingHeroCarousel/bg2.webp",
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique consequuntur sapiente molestiae a deserunt earum ipsam aliquam, harum vitae, quae distinctio nihil. Consequatur?",
   },
   {
     title: "SLIDER",
     name: "Bhrigu lake",
-    image: "/img4.jpg",
+    image: "/assets/LandingHeroCarousel/bg3.webp",
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique consequuntur sapiente molestiae a deserunt earum ipsam aliquam, harum vitae, quae distinctio nihil. Consequatur?",
   },
   {
     title: "SLIDER",
     name: "Everest",
-    image: "/img5.jpg",
+    image: "/assets/LandingHeroCarousel/bg2.webp",
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique consequuntur sapiente molestiae a deserunt earum ipsam aliquam, harum vitae, quae distinctio nihil. Consequatur?",
   },
   {
     title: "SLIDER",
     name: "Maheshwar",
-    image: "/img3.jpg",
+    image: "/assets/LandingHeroCarousel/bg4.webp",
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique consequuntur sapiente molestiae a deserunt earum ipsam aliquam, harum vitae, quae distinctio nihil. Consequatur?",
   },
   {
     title: "SLIDER",
     name: "HERON",
-    image: "/img4.jpg",
+    image: "/assets/LandingHeroCarousel/bg3.webp",
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique consequuntur sapiente molestiae a deserunt earum ipsam aliquam, harum vitae, quae distinctio nihil. Consequatur?",
   },
   {
     title: "SLIDER",
     name: "BUTTERFLY",
-    image: "/img5.jpg",
+    image: "/assets/LandingHeroCarousel/bg2.webp",
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique consequuntur sapiente molestiae a deserunt earum ipsam aliquam, harum vitae, quae distinctio nihil. Consequatur?",
   },
   {
     title: "SLIDER",
     name: "Labradaor",
-    image: "/img2.jpg",
+    image: "/assets/LandingHeroCarousel/bg.webp",
     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique consequuntur sapiente molestiae a deserunt earum ipsam aliquam, harum vitae, quae distinctio nihil. Consequatur?",
   },
 ];
@@ -734,7 +734,7 @@ const BookTrekPage = () => {
             </div>
           </div>
 
-          <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-16 items-stretch mr-5">
+          <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-16 items-stretch mr-5">
             {filteredCards.length > 0 ? (
               filteredCards.map((card, idx) => (
                 <Card
