@@ -1,9 +1,11 @@
 import React, { memo } from "react";
 import { Link } from "react-router-dom";
 import BookNow from "../BookNow";
+import { useNavigate } from "react-router-dom";
 
 // ✅ Memoized for performance
-const Card = memo(({ title, price, time, image, description }) => {
+const Card = memo(({ id, title, price, time, image, description }) => {
+  const navigate = useNavigate();
   return (
     <div
       className="bg-white rounded-[15px] shadow-2xl overflow-hidden transition-transform transform hover:-translate-y-2 hover:shadow-3xl 
@@ -42,13 +44,14 @@ const Card = memo(({ title, price, time, image, description }) => {
           {description}
         </p>
 
-        <div className="mt-3 flex flex-col ">
-          <p className="font-bold mb-4 font-syne text-[20px] text-black">INR {price}/Person</p>
+        <div className="mt-3 flex flex-col items-center">
+          <p className="font-bold mb-4 text-[20px] text-black">
+            INR {price}/Person
+          </p>
 
           {/* ✅ Use Link with prefetch behavior for faster route transitions */}
-          <Link
-            to="/BookNow"
-            prefetch="intent"
+          <button
+            onClick={() => navigate(`/book-now/${id}`)}
             className="bg-[rgba(143,110,86,1)] h-[40px] hover:bg-[#4b301c] font-semibold py-2 px-5 rounded-lg flex justify-center items-center gap-2 
             text-[rgba(255,255,255,1)] mb-3 z-10 transition-all duration-300 font-syne"
           >
@@ -59,7 +62,7 @@ const Card = memo(({ title, price, time, image, description }) => {
               loading="lazy"
             />
             INQUIRE NOW
-          </Link>
+          </button>
         </div>
       </div>
     </div>
