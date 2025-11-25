@@ -2,7 +2,7 @@ import admin from "firebase-admin";
 import fs from "fs";
 
 const serviceAccount = JSON.parse(
-  fs.readFileSync(new URL("./config/firebase-service-account.json", import.meta.url))
+  process.env.FIREBASE_SERVICE_ACCOUNT
 );
 
 admin.initializeApp({
@@ -10,3 +10,14 @@ admin.initializeApp({
 });
 
 export default admin;
+
+
+// import admin from "firebase-admin";
+
+// const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+// });
+
+// export default admin;
