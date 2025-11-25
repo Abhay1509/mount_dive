@@ -6,12 +6,12 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState({
-    name: "Test User",
-    email: "test@example.com",
-  });
+  //   const [user, setUser] = useState({
+  //   name: "Test User",
+  //   email: "test@example.com",
+  // });
 
-  // const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // ✅ Fetch Firestore role when app starts
