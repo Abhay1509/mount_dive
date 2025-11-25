@@ -526,7 +526,7 @@ const BookNow = () => {
           </div>
 
           {/* BIG GRAY BLANK PART — PRESERVED EXACTLY */}
-          <div className="h-[600px] w-full bg-[#E5E3DC4D] border border-dashed border-[#D8D5CA] rounded-lg mt-6 border-2"></div>
+          <div className="h-[600px] w-full bg-[#E5E3DC4D]  border-dashed border-[#D8D5CA] rounded-lg mt-6 border-2"></div>
 
           {/* STATS BLOCKS */}
           <div className="flex flex-wrap mt-6 gap-3">
@@ -676,7 +676,7 @@ const BookNow = () => {
           <div className="xl:sticky xl:top-24 space-y-5">
             <div className="w-full h-[298px] border border-gray-300 rounded-lg flex flex-col items-center">
               <p className="text-sm text-gray-500 mt-8">PRICE</p>
-              <h2 className="text-3xl font-bold text-[#3B3B3B] mt-2">₹8,999</h2>
+              <h2 className="text-3xl font-bold text-[#3B3B3B] mt-2">₹{trek?.price}/-</h2>
               <p className="text-sm text-gray-500 mb-4">per person</p>
 
               <button
