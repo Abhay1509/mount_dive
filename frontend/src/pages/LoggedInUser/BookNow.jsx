@@ -526,7 +526,7 @@ const BookNow = () => {
           </div>
 
           {/* BIG GRAY BLANK PART — PRESERVED EXACTLY */}
-          <div className="h-[600px] w-full bg-[#E5E3DC4D] border border-dashed border-[#D8D5CA] rounded-lg mt-6 border-2"></div>
+          <div className="h-[600px] w-full bg-[#E5E3DC4D]  border-dashed border-[#D8D5CA] rounded-lg mt-6 border-2"></div>
 
           {/* STATS BLOCKS */}
           <div className="flex flex-wrap mt-6 gap-3">

@@ -1,71 +1,78 @@
+// src/pages/LoggedInUser/LoggedInComponents/Card.jsx
 import React, { memo } from "react";
-import { Link } from "react-router-dom";
-import BookNow from "../BookNow";
 import { useNavigate } from "react-router-dom";
 
-// ✅ Memoized for performance
+
+
+const formatPrice = (p) => {
+  if (p == null) return "—";
+  return Number(p).toLocaleString("en-IN");
+};
+
 const Card = memo(({ id, title, price, time, image, description }) => {
   const navigate = useNavigate();
+
+
   return (
-    <div
-      className="bg-white rounded-[50px] shadow-2xl overflow-hidden transition-transform transform hover:-translate-y-2 hover:shadow-3xl 
-      h-[468px] w-[450px] flex flex-col justify-center items-center hover:cursor-pointer"
+    <article
+      className="bg-white rounded-[16px] shadow-xl overflow-hidden transform hover:-translate-y-2 hover:shadow-2xl transition-all duration-300
+                 h-[500px] w-[330px] flex flex-col"
     >
-      {/* ✅ Image - Lazy loaded + object-cover for stable layout */}
-      <div className="h-[240px] w-[380px] rounded-[30px] overflow-hidden bg-gray-200 mt-[30px]">
+      {/* Image */}
+      <div className="h-[220px] w-full overflow-hidden bg-gray-200">
         <img
           src={image}
           alt={title}
-          loading="lazy"
-          decoding="async"
           className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = DEV_FALLBACK_IMG;
+          }}
         />
       </div>
 
-      {/* ✅ Card Content */}
-      <div className="p-3 text-center flex flex-col justify-center items-center">
-        <h2 className="h-[21px] w-[290px] font-syne text-[20px] font-semibold text-gray-800 truncate">
-          {title}
-        </h2>
+      {/* Content */}
+      <div className="p-5 flex-1 flex flex-col justify-between font-syne">
+        <div>
+          <h3
+            className="text-[20px] font-bold text-gray-900 leading-tight mb-1 truncate"
+            title={title}
+          >
+            {title}
+          </h3>
 
-        <p className="font-syne font-bold text-[13px] leading-[21px] uppercase mt-2 text-[#3B3B3B]">
-          {time}
-        </p>
+          <div className="text-[13px] font-semibold uppercase text-gray-600 tracking-wide">
+            {time}
+          </div>
 
-        {/* ✅ Prevent layout shift (Vector is positioned absolutely, no DOM jump) */}
-        <img
-          src="/SVG/Vector.svg"
-          alt=""
-          className="absolute bottom-0 z-[-1] w-full h-[200px] pointer-events-none select-none"
-          loading="lazy"
-        />
-
-        <p className="font-syne font-medium text-[15px] leading-[21px] text-black/60 mt-4 line-clamp-3">
-          {description}
-        </p>
-
-        <div className="mt-3 flex flex-col items-center">
-          <p className="font-bold mb-4 text-[20px] text-black">
-            INR {price}/Person
+          <p className="mt-4 text-[15px] text-gray-700 leading-relaxed line-clamp-3">
+            {description}
           </p>
+        </div>
 
-          {/* ✅ Use Link with prefetch behavior for faster route transitions */}
+        <div className="mt-6">
+          <div className="text-[22px] font-bold text-gray-900 mb-3">
+            ₹ {formatPrice(price)}
+            <span className="text-[15px] text-gray-500"> / person</span>
+          </div>
+
+          {/* Full Width Strong Button */}
           <button
             onClick={() => navigate(`/book-now/${id}`)}
-            className="bg-[rgba(143,110,86,1)] h-[40px] hover:bg-[#4b301c] font-semibold py-2 px-5 rounded-lg flex justify-center items-center gap-2 
-            text-[rgba(255,255,255,1)] mb-3 z-10 transition-all duration-300"
+            className="w-full h-[50px] bg-[#8F6E56] hover:bg-[#664d3b] 
+                       text-white text-[16px] font-bold rounded-[10px] 
+                       flex items-center justify-center gap-2 transition-all"
           >
             <img
               src="/SVG/inquire.svg"
               alt=""
-              className="w-[18px] h-[18px] object-contain"
-              loading="lazy"
+              className="w-[20px] h-[20px] object-contain"
             />
             INQUIRE NOW
           </button>
         </div>
       </div>
-    </div>
+    </article>
   );
 });
 
