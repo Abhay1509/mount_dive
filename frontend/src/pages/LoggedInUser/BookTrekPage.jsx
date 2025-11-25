@@ -82,7 +82,6 @@ const slides = [
   },
 ];
 
-
 const BookTrekPage = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -96,6 +95,14 @@ const BookTrekPage = () => {
   const deferredType = useDeferredValue(selectedType);
   const deferredMaxPrice = useDeferredValue(maxPrice);
   const [isOpen, setIsOpen] = useState(false);
+
+  // add next to other useState declarations near top of component
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+  const [minPriceFilter, setMinPriceFilter] = useState(1000);
+  const [maxPriceFilter, setMaxPriceFilter] = useState(50000);
+  const [selectedLocation, setSelectedLocation] = useState("All");
+  const [sortByPrice, setSortByPrice] = useState("none"); // "none" | "low" | "high"
 
   useEffect(() => {
     const fetchTreks = async () => {
@@ -113,17 +120,98 @@ const BookTrekPage = () => {
   }, []);
 
   const filteredCards = useMemo(() => {
-    return cards.filter((card) => {
+    // convert date strings to timestamps once
+    const fromTs = dateFrom ? new Date(dateFrom).getTime() : null;
+    const toTs = dateTo ? new Date(dateTo).getTime() : null;
+
+    let result = cards.filter((card) => {
+      // type filter
       const matchesType =
-        deferredType === "All" ||
-        card.type.toLowerCase() === deferredType.toLowerCase();
-      const matchesPrice = Number(card.price) <= deferredMaxPrice;
-      return matchesType && matchesPrice;
+        deferredType === "All" || !deferredType
+          ? true
+          : (card.type || "").toLowerCase() === deferredType.toLowerCase();
+
+      // location filter
+      const matchesLocation =
+        selectedLocation === "All" || !selectedLocation
+          ? true
+          : (card.location || "").toLowerCase() ===
+            selectedLocation.toLowerCase();
+
+      // price range filter
+      const price = Number(card.price) || 0;
+      const matchesPrice =
+        price >= Number(minPriceFilter) && price <= Number(maxPriceFilter);
+
+      // date filter: only if card provides date range or a startDate - otherwise pass through
+      let matchesDate = true;
+      // Example: if your trek documents include startDate/endDate as ISO strings:
+      // card.startDate, card.endDate
+      if (fromTs || toTs) {
+        if (card.startDate || card.endDate) {
+          const cardStart = card.startDate
+            ? new Date(card.startDate).getTime()
+            : null;
+          const cardEnd = card.endDate
+            ? new Date(card.endDate).getTime()
+            : null;
+          // overlap logic: wants at least one day inside selected range
+          if (fromTs && toTs) {
+            // must overlap
+            matchesDate =
+              (cardStart &&
+                cardEnd &&
+                cardEnd >= fromTs &&
+                cardStart <= toTs) ||
+              (cardStart &&
+                !cardEnd &&
+                cardStart >= fromTs &&
+                cardStart <= toTs);
+          } else if (fromTs) {
+            matchesDate = cardEnd
+              ? cardEnd >= fromTs
+              : cardStart
+              ? cardStart >= fromTs
+              : true;
+          } else if (toTs) {
+            matchesDate = cardStart ? cardStart <= toTs : true;
+          }
+        } else {
+          // if trek has no date info, treat it as matching (so you can still see those treks)
+          matchesDate = true;
+        }
+      }
+
+      return matchesType && matchesLocation && matchesPrice && matchesDate;
     });
-  }, [cards, deferredType, deferredMaxPrice]);
+
+    // sort by price if requested
+    if (sortByPrice === "low") {
+      result.sort((a, b) => (Number(a.price) || 0) - (Number(b.price) || 0));
+    } else if (sortByPrice === "high") {
+      result.sort((a, b) => (Number(b.price) || 0) - (Number(a.price) || 0));
+    }
+
+    return result;
+  }, [
+    cards,
+    deferredType,
+    deferredMaxPrice, // keep for UI but main price filters are minPriceFilter/maxPriceFilter
+    dateFrom,
+    dateTo,
+    minPriceFilter,
+    maxPriceFilter,
+    selectedLocation,
+    sortByPrice,
+  ]);
 
   const trekTypes = useMemo(
-    () => ["All", ...new Set(cards.map((c) => c.type))],
+    () => ["All", ...new Set(cards.map((c) => c.type || "Other"))],
+    [cards]
+  );
+
+  const locations = useMemo(
+    () => ["All", ...new Set(cards.map((c) => c.location || "Unknown"))],
     [cards]
   );
 
@@ -571,14 +659,7 @@ const BookTrekPage = () => {
       `}</style>
       </div>
       <div className="relative w-full flex flex-col py-10">
-        <div
-          className="fixed inset-0 z-[-1] bg-cover bg-top"
-          style={{
-            backgroundImage: "url('assets/LandingHeroCarousel/bg2.webp')",
-          }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-b from-white via-[#8F6E56] to-[#8F6E56] opacity-80" />
-        </div>
+        <div className="fixed inset-0 z-[-1] bg-cover bg-[#F5F4F0] bg-top"></div>
 
         <div className="text-center mt-20 flex flex-col justify-center items-center">
           <h1 className="font-syne font-bold text-[48px] text-black/70 uppercase">
@@ -591,63 +672,179 @@ const BookTrekPage = () => {
         </div>
 
         <div className="w-full max-w-7xl mx-auto flex flex-col lg:flex-row gap-14 mb-20 pt-10">
-          <div className="hidden lg:block lg:w-[256px]">
+          {/* --------- FILTER PANEL (replace existing left panel) --------- */}
+          <div className="hidden lg:block lg:w-[230px]">
             <div className="sticky top-[100px] bg-white border border-gray-200 rounded-xl p-4 shadow-sm font-syne text-[#3B3B3B] h-fit">
               <h2 className="text-lg font-semibold mb-4">Filters</h2>
 
-              <div className="mb-6">
+              {/* Date Range (pop-over using native inputs) */}
+              <div className="mb-4">
                 <label className="block text-sm font-medium mb-2">
                   Date Range
                 </label>
-                <button className="w-full flex items-center justify-between border border-gray-300 rounded-md px-3 py-2 text-sm hover:border-[#8F6E56] transition">
-                  <span className="text-gray-500">Select Dates</span>
-                  <img src="/SVG/calendar.svg" alt="" className="w-4 h-4" />
-                </button>
-              </div>
+                <div className="relative">
+                  <button
+                    onClick={() => {}}
+                    className="w-full flex items-center justify-between border border-gray-300 rounded-md px-3 py-2 text-sm hover:border-[#8F6E56] transition"
+                  >
+                    <span className="text-gray-700">
+                      {dateFrom || dateTo
+                        ? `${dateFrom || "Start"} → ${dateTo || "End"}`
+                        : "Select Dates"}
+                    </span>
+                    <img src="/SVG/calendar.svg" alt="" className="w-4 h-4" />
+                  </button>
 
-              <div className="mb-6">
-                <label className="block text-sm font-medium mb-3">
-                  Budget Range
-                </label>
-                <input
-                  type="range"
-                  min="1000"
-                  max="50000"
-                  step="500"
-                  value={maxPrice}
-                  onChange={(e) => setMaxPrice(Number(e.target.value))}
-                  className="w-full accent-[#8F6E56] cursor-pointer"
-                />
-                <div className="flex justify-between text-xs mt-1 text-gray-600">
-                  <span>Min ₹1,000</span>
-                  <span>Max ₹50,000</span>
+                  {/* Inline small date inputs (always visible on desktop for simplicity) */}
+                  <div className="flex gap-2 mt-3">
+                    <input
+                      type="date"
+                      value={dateFrom}
+                      onChange={(e) => setDateFrom(e.target.value)}
+                      className="w-1/2 border border-gray-300 rounded-md px-2 py-1 text-sm"
+                    />
+                    <input
+                      type="date"
+                      value={dateTo}
+                      onChange={(e) => setDateTo(e.target.value)}
+                      className="w-1/2 border border-gray-300 rounded-md px-2 py-1 text-sm"
+                    />
+                  </div>
+                  <div className="flex gap-2 mt-2 text-xs text-gray-500">
+                    <button
+                      onClick={() => {
+                        setDateFrom("");
+                        setDateTo("");
+                      }}
+                      className="underline"
+                    >
+                      Clear
+                    </button>
+                  </div>
                 </div>
               </div>
 
+              {/* Budget Range */}
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-2">
-                  Filter by Type
+                  Budget Range
+                </label>
+
+                <div className="px-1">
+                  {/* slider for max; keep two number boxes for precise min/max */}
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="range"
+                      min="1000"
+                      max="50000"
+                      step="500"
+                      value={minPriceFilter}
+                      onChange={(e) => {
+                        const v = Number(e.target.value);
+                        // keep min <= max
+                        setMinPriceFilter(Math.min(v, maxPriceFilter));
+                      }}
+                      className="flex-1 accent-[#8F6E56] cursor-pointer"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between gap-2 mt-2">
+                    <div className="flex-1">
+                      <label className="text-xs text-gray-500">Min</label>
+                      <input
+                        type="number"
+                        value={minPriceFilter}
+                        onChange={(e) => {
+                          const v = Number(e.target.value || 0);
+                          setMinPriceFilter(
+                            Math.max(0, Math.min(v, maxPriceFilter))
+                          );
+                        }}
+                        className="w-full border border-gray-200 rounded-md px-2 py-1 text-sm"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <label className="text-xs text-gray-500">Max</label>
+                      <input
+                        type="number"
+                        value={maxPriceFilter}
+                        onChange={(e) => {
+                          const v = Number(e.target.value || 0);
+                          setMaxPriceFilter(Math.max(v, minPriceFilter));
+                        }}
+                        className="w-full border border-gray-200 rounded-md px-2 py-1 text-sm"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex justify-between text-xs mt-1 text-gray-600">
+                    <span>Min ₹1,000</span>
+                    <span>Max ₹50,000</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sort by Location */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">
+                  Sort by Location
                 </label>
                 <select
-                  value={selectedType}
-                  onChange={(e) => setSelectedType(e.target.value)}
+                  value={selectedLocation}
+                  onChange={(e) => setSelectedLocation(e.target.value)}
                   className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[#8F6E56]"
                 >
-                  {trekTypes.map((type, index) => (
-                    <option key={index} value={type}>
-                      {type}
+                  {locations.map((loc, idx) => (
+                    <option key={idx} value={loc}>
+                      {loc}
                     </option>
                   ))}
                 </select>
               </div>
 
-              <button className="w-full bg-[#8F6E56] hover:bg-[#73543F] text-white font-medium py-2 rounded-md transition">
-                Apply Filters
-              </button>
+              {/* Sort by Price */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">
+                  Sort by Price
+                </label>
+                <select
+                  value={sortByPrice}
+                  onChange={(e) => setSortByPrice(e.target.value)}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[#8F6E56]"
+                >
+                  <option value="none">None</option>
+                  <option value="low">Low to High</option>
+                  <option value="high">High to Low</option>
+                </select>
+              </div>
+
+              <div className="flex gap-2 mt-3">
+                <button
+                  onClick={() => {}}
+                  className="flex-1 w-full bg-[#8F6E56] hover:bg-[#73543F] text-white font-medium py-2 rounded-md transition"
+                >
+                  Apply Filters
+                </button>
+                <button
+                  onClick={() => {
+                    // reset all filters
+                    setDateFrom("");
+                    setDateTo("");
+                    setMinPriceFilter(1000);
+                    setMaxPriceFilter(50000);
+                    setSelectedLocation("All");
+                    setSelectedType("All");
+                    setSortByPrice("none");
+                  }}
+                  className="px-3 py-2 border border-gray-300 rounded-md text-sm"
+                >
+                  Reset
+                </button>
+              </div>
             </div>
           </div>
 
           <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-16 items-stretch mr-5">
+            {/* Replace the existing block with this */}
             {filteredCards.length > 0 ? (
               filteredCards.map((card, idx) => (
                 <Card
@@ -656,7 +853,7 @@ const BookTrekPage = () => {
                   title={card.title}
                   price={card.price}
                   time={card.duration}
-                  image={card.images?.[0]} // first image
+                  image={card.images?.[0]}
                   description={card.description}
                 />
               ))

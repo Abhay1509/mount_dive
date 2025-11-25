@@ -2,12 +2,12 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
+dotenv.config();
 
 import authRoutes from "./routes/authRoutes.js";
 import trekRoutes from "./routes/trekRoutes.js";
 import trekRegistrationRoutes from "./routes/trekRegistrationRoutes.js";
 
-dotenv.config();
 
 const app = express();
 
