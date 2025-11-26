@@ -8,15 +8,15 @@ import authRoutes from "./routes/authRoutes.js";
 import trekRoutes from "./routes/trekRoutes.js";
 import trekRegistrationRoutes from "./routes/trekRegistrationRoutes.js";
 
-
 const app = express();
 
 // Middleware
 app.use(
   cors({
-    origin: "http://localhost:5173", // frontend URL
+    origin: ["https://mountdive.com", "https://www.mountdive.com"], // frontend URL
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
   })
 );
 
