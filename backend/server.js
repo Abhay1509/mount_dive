@@ -17,6 +17,7 @@ app.use(
       "http://localhost:5173",
       "https://mountdive.com",
       "https://www.mountdive.com",
+      "https://mount-dive.onrender.com",
     ], // frontend URL
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
