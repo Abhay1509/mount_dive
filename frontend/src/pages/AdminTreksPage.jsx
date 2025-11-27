@@ -109,11 +109,11 @@ const AdminTreksPage = () => {
     try {
       if (editingId) {
         await axios.put(
-          `http://localhost:5000/api/treks/${editingId}`,
+          `{import.meta.env.VITE_API_URL}/api/treks/${editingId}`,
           payload
         );
       } else {
-        await axios.post("http://localhost:5000/api/treks", payload);
+        await axios.post(`${import.meta.env.VITE_API_URL}/api/treks`, payload);
       }
 
       resetForm();
