@@ -74,58 +74,43 @@ const AuthPage = () => {
         </Suspense>
       </div>
 
+      {/* Logo */}
+      <div className="m-0 p-0 absolute top-6 right-0 flex items-center mb-5 z-50">
+        <img
+          src="/SVG/logo1.svg"
+          alt="Mount Dive"
+          className="w-48 sm:w-60 md:w-64 h-auto mb-2"
+        />
+        <img src="/SVG/birds.svg" alt="" />
+      </div>
       {/* Auth panel */}
       <div
-        className="w-full md:w-1/3 bg-white shadow-lg relative z-20
+        className="w-[480px] md:w-1/3 h-[1024px] bg-white shadow-lg relative z-20
                       md:fixed md:top-0 md:right-0 md:h-full md:overflow-auto
-                      flex flex-col justify-center px-6 py-12"
+                      flex flex-col justify-center px-16 py-12 mt-0 "
       >
-        {/* Back to home */}
-        <div className="flex justify-start mb-4">
-          <button
-            onClick={() => navigate("/landing")}
-            className="px-4 py-1 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 hover:text-black text-sm font-medium transition flex items-center"
-          >
-            &#8592; Back
-          </button>
-        </div>
-
-        {/* Logo */}
-        <div className="flex flex-col items-center mb-6">
-          <img
-            src="/images/mountdive-logo.png"
-            alt="Mount Dive"
-            className="w-28 mb-2"
-          />
-          <p className="text-xs text-gray-400">SPORTS AND NATURE</p>
-        </div>
-
-        {/* Title */}
-        <h3 className="text-xl font-semibold text-gray-800 text-left mb-4">
-          {current.title}
-        </h3>
-
         {/* Toggle for email/phone */}
-        <div className="flex justify-center mb-6">
-          <div className="bg-gray-200 rounded-full p-1 flex items-center">
+        <div className="flex justify-center mb-3 z-40">
+          <div className="bg-[#4D4D4D] w-full max-w-[360px] h-[45px] rounded-[30px] p-1 flex justify-items-center items-center absolute top-[95px]">
             <button
               aria-pressed={contactMethod === "email"}
               onClick={() => handleToggle("email")}
-              className={`px-5 py-1 rounded-full transition ${
+              className={`px-5 ml-1 my-3 w-1/2 font-semibold h-full font-syne py-1 rounded-full transition ${
                 contactMethod === "email"
-                  ? "bg-black text-white"
-                  : "text-gray-600"
+                  ? "bg-white text-black"
+                  : "bg-transparent text-white"
               }`}
             >
               Email
             </button>
+
             <button
               aria-pressed={contactMethod === "phone"}
               onClick={() => handleToggle("phone")}
-              className={`px-5 py-1 rounded-full transition ${
+              className={`px-5 mr-1 w-1/2 h-full font-semibold py-1 font-syne rounded-full transition ${
                 contactMethod === "phone"
-                  ? "bg-black text-white"
-                  : "text-gray-600"
+                  ? "bg-white text-black"
+                  : "bg-transparent text-white"
               }`}
             >
               Phone
@@ -133,43 +118,80 @@ const AuthPage = () => {
           </div>
         </div>
 
-        {/* Form with transition */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentMode}
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.3 }}
-            className="w-full max-w-md mx-auto"
-          >
-            <FormComponent
-              contactMethod={contactMethod}
-              onSuccess={(data) => {
-                // ✅ Save user session instantly
-                if (data?.token) login(data.token, data.user);
-                navigate(current.redirect);
-              }}
-            />
-
-            <p className="text-sm text-center text-gray-600 mt-4">
-              {current.linkText}{" "}
-              <button
-                onClick={() => goToAuth(current.linkTo)}
-                className="text-blue-600 underline"
+        <div className="relative">
+          {/* Title with animation */}
+          <div className="sign relative h-[30px] mt-10 w-[100px]">
+            <AnimatePresence mode="wait">
+              <motion.h3
+                key={currentMode}
+                initial={{ opacity: 0, y: currentMode === "login" ? -10 : -5 }}
+                animate={{ opacity: 1, y: currentMode === "login" ? 0 : 46 }}
+                exit={{ opacity: 0, y: currentMode === "login" ? 10 : 5 }}
+                transition={{ duration: 0.2 }}
+                className={`text-xl font-syne font-semibold text-gray-800 ${
+                  currentMode === "login" ? "mb-2" : "mb-4"
+                }`}
               >
-                {current.linkLabel}
-              </button>
-            </p>
-          </motion.div>
-        </AnimatePresence>
-      </div>
+                {current.title}
+              </motion.h3>
+            </AnimatePresence>
+          </div>
 
-      {/* Mobile slider */}
-      <div className="md:hidden w-full h-56 relative">
-        <Suspense fallback={<div>Loading...</div>}>
-          <AuthImageSlider images={images} interval={6000} />
-        </Suspense>
+          {/* Form with transition */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentMode}
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              transition={{ duration: 0.3 }}
+              className="w-full max-w-md mx-auto"
+            >
+              <FormComponent
+                contactMethod={contactMethod}
+                onSuccess={(data) => {
+                  // ✅ Save user session instantly
+                  if (data?.token) login(data.token, data.user);
+                  navigate(current.redirect);
+                }}
+              />
+
+              <p className="text-sm text-center text-gray-600 mt-4">
+                {current.linkText}{" "}
+                <button
+                  onClick={() => goToAuth(current.linkTo)}
+                  className="text-blue-600 underline"
+                >
+                  {current.linkLabel}
+                </button>
+              </p>
+            </motion.div>
+          </AnimatePresence>
+
+          <div className="font-syne py-2 text-[10px] gap-[130px] text-[#5300305C]">
+            --------------------------------OR--------------------------------
+          </div>
+
+          <div className="gap-8 h-[36px] w-full flex justify-center items-center">
+            <button>
+              <div className="google h-[35px] w-[45px] border border-black rounded-md flex justify-center items-center">
+                <img src="/google.png" className="h-[22px] w-[24px]" alt="" />
+              </div>
+            </button>
+            <button>
+              <div className="apple h-[35px] w-[45px] border flex justify-center items-center border-black rounded-md">
+                <img src="/apple.svg" alt="" />
+              </div>
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile slider */}
+        <div className="md:hidden w-full h-56 relative">
+          <Suspense fallback={<div>Loading...</div>}>
+            <AuthImageSlider images={images} interval={6000} />
+          </Suspense>
+        </div>
       </div>
     </div>
   );

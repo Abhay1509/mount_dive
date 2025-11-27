@@ -2,7 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
   margin: 0;
 }
@@ -34,4 +36,14 @@ html, body, #root {
 * {
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.4) rgba(0, 0, 0, 0.2);
+}
+
+/* Hide Chrome/Edge password toggle icon */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+input[type="password"]::-webkit-textfield-decoration-container {
+  visibility: hidden;
 }

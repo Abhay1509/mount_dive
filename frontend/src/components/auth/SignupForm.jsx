@@ -246,40 +246,52 @@ const SignupForm = ({ contactMethod, onSuccess }) => {
   return (
     <>
       <form
-        className="space-y-4"
+        className="space-y-3.5 mt-10 relative"
         onSubmit={otpSent ? handleVerifyOtp : handleSubmit}
       >
         {/* <div id="recaptcha-container"></div> */}
         {!otpSent ? (
           <>
+            <img
+              src="/SVG/username.svg"
+              className=" absolute top-6 left-1 h-[20px]"
+              alt=""
+            />
             <input
               type="text"
               name="fullName"
               value={formData.fullName}
               onChange={handleChange}
               placeholder="Full Name"
-              className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
+              aria-label="Full Name"
+              className="w-full px-8 py-2 border rounded-lg shadow-md border-b-1 border-black focus:ring-2 focus:ring-blue-400 placeholder-red-300"
               required
             />
 
             {contactMethod === "email" ? (
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Email address"
-                className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
-                required
-              />
-            ) : (
-              <div className="flex gap-2">
+              <>
+                <img
+                  src="/SVG/mail.svg"
+                  className=" absolute top-[67px] left-1 h-[20px]"
+                  alt=""
+                />
                 <input
-                  type="text"
-                  name="countryCode"
-                  value={formData.countryCode}
+                  type="email"
+                  name="email"
+                  value={formData.email}
                   onChange={handleChange}
-                  className="w-20 px-2 py-2 border rounded-md focus:ring-2 focus:ring-blue-400 text-center"
+                  placeholder="Email address"
+                  aria-label="Email"
+                  className="w-full px-8 py-2 border rounded-lg shadow-md border-b-1 border-black focus:ring-2 focus:ring-blue-400 placeholder-red-300"
+                  required
+                />
+              </>
+            ) : (
+              <>
+                <img
+                  src="/SVG/call.svg"
+                  className=" absolute top-[67px] left-1 h-[20px]"
+                  alt=""
                 />
                 <input
                   type="tel"
@@ -287,13 +299,19 @@ const SignupForm = ({ contactMethod, onSuccess }) => {
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="Phone number"
-                  className="flex-1 px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
+                  aria-label="Phone"
+                  className="w-full px-8 py-2 border rounded-lg shadow-md border-b-1 border-black focus:ring-2 focus:ring-blue-400 placeholder-red-300"
                   required
                 />
-              </div>
+              </>
             )}
             {contactMethod === "email" && (
               <>
+                <img
+                  src="/SVG/lock.svg"
+                  className="absolute top-[124px] left-1 h-[20px] z-30"
+                  alt=""
+                />
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
@@ -301,40 +319,72 @@ const SignupForm = ({ contactMethod, onSuccess }) => {
                     value={formData.password}
                     onChange={handleChange}
                     placeholder="Password"
-                    className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
+                    aria-label="Password"
+                    className="w-full px-8 py-2 border rounded-lg shadow-md border-b-1 border-black focus:ring-2 focus:ring-blue-400 placeholder-red-300"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword((s) => !s)}
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
                   >
-                    {showPassword ? "🙈" : "👁"}
+                    {showPassword ? (
+                      <img src="/SVG/viewon.svg" alt="" />
+                    ) : (
+                      <img src="/SVG/viewoff.svg" alt="" />
+                    )}
                   </button>
                 </div>
 
+                {/* Confirm Password */}
+                <img
+                  src="/SVG/lock.svg"
+                  className="absolute top-[180px] left-1 h-[20px] z-30"
+                  alt=""
+                />
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   placeholder="Confirm Password"
-                  className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-400"
+                  aria-label="Confirm Password"
+                  className="w-full px-8 py-2 border rounded-lg shadow-md border-b-1 border-black focus:ring-2 focus:ring-blue-400 placeholder-red-300"
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((s) => !s)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  className="absolute right-3 top-[190px] -translate-y-1/2 text-gray-500"
+                >
+                  {showPassword ? (
+                    <img src="/SVG/viewon.svg" alt="" />
+                  ) : (
+                    <img src="/SVG/viewoff.svg" alt="" />
+                  )}
+                </button>
               </>
             )}
 
-            {errors.general && (
-              <p className="text-red-500 text-sm">{errors.general}</p>
-            )}
+            <div className="relative">
+              {errors.general && (
+                <p className="absolute top-[-10px]  left-0 text-red-500 text-sm">
+                  {errors.general}
+                </p>
+              )}
+            </div>
 
+            {/* Submit Button */}
             <button
               type="submit"
               className="w-full bg-black text-white py-2 rounded-md hover:opacity-95 transition disabled:opacity-60"
               disabled={loading}
             >
-              {loading ? "Sending OTP..." : "Send OTP"}
+              {loading ? "Signing up..." : "Sign up"}
             </button>
           </>
         ) : (
