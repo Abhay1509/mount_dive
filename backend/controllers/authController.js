@@ -55,6 +55,7 @@ export const sendOtp = async (req, res) => {
           text: `Your verification code is ${otp}. It expires in 5 minutes.`,
         });
       } catch (err) {
+        console.error("EMAIL SEND ERROR:", err);
         return res
           .status(500)
           .json({ message: "Failed to send OTP email", error: err.message });
