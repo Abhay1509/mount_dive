@@ -27,7 +27,6 @@ const backgroundImages = [
   "/assets/LandingHeroCarousel/bg4.webp",
 ];
 
-
 const LandingPage = () => {
   const { currentImage, setCurrentImage } = useHeroCarousel(
     backgroundImages,
@@ -88,8 +87,8 @@ const LandingPage = () => {
         <HeroNavbar />
 
         {/* Hero Content */}
-        <div className="flex-1 flex flex-col md:flex-row items-center justify-between px-8 md:px-16 relative z-10 text-white">
-          <div className="flex-1 text-center md:text-left">
+        <div className="flex-1 flex flex-col md:flex-row items-center justify-between px-8 md:px-16 relative z-10 text-white mt-56 md:mt-14 lg:mt-10">
+          <div className="flex-1 text-center sm:text-left ">
             <motion.h2
               initial={{ y: 40, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -121,11 +120,8 @@ const LandingPage = () => {
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              className="mt-6 px-8 py-3 bg-[#8B7355] text-white font-bold rounded-full shadow-lg hover:[#68917C] transition"
-              onClick={() => {
-                if (user) navigate("/book-trek"); // logged-in → booking page
-                else navigate("/auth/login"); // guest → login page
-              }}
+              className="mt-6 px-8 py-3 bg-[#8B7355] text-white font-bold rounded-full shadow-lg hover:bg-[#68917C] transition"
+              onClick={() => navigate("/book-trek")}
             >
               Join us Now
             </motion.button>

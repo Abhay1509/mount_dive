@@ -62,6 +62,7 @@ const Card = memo(({ id, title, price, time, image, description }) => {
             className="w-full h-[50px] bg-[#8F6E56] hover:bg-[#664d3b] 
                        text-white text-[16px] font-bold rounded-[10px] 
                        flex items-center justify-center gap-2 transition-all"
+                       
           >
             <img
               src="/SVG/inquire.svg"

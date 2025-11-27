@@ -258,6 +258,7 @@ const BookTrekPage = () => {
       resetTimeAnimation();
     });
   };
+  
 
   const resetTimeAnimation = () => {
     const bar = runningTimeRef.current;
@@ -292,21 +293,21 @@ const BookTrekPage = () => {
     };
   }, []);
 
-  //  Guest protection
-  if (!user) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-        <h1 className="text-2xl font-bold text-red-500 mb-4">Access Denied</h1>
-        <p className="text-gray-700 mb-6">You need to log in to book a trek.</p>
-        <button
-          onClick={() => navigate("/auth/login")}
-          className="px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
-        >
-          Go to Login
-        </button>
-      </div>
-    );
-  }
+  // //  Guest protection
+  // if (!user) {
+  //   return (
+  //     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+  //       <h1 className="text-2xl font-bold text-red-500 mb-4">Access Denied</h1>
+  //       <p className="text-gray-700 mb-6">You need to log in to book a trek.</p>
+  //       <button
+  //         onClick={() => navigate("/auth/login")}
+  //         className="px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
+  //       >
+  //         Go to Login
+  //       </button>
+  //     </div>
+  //   );
+  // }
 
   // Logged-in view
   return (
@@ -460,7 +461,7 @@ const BookTrekPage = () => {
                   Home
                 </Link>
                 <Link
-                  to="/explore"
+                  to="/book-trek"
                   className="hover:text-[rgba(104,145,124,1)]"
                   onClick={() => setIsOpen(false)}
                 >
@@ -548,21 +549,19 @@ const BookTrekPage = () => {
               <div
                 key={i}
                 className="item absolute bg-cover bg-center rounded-[20px] shadow-[0_25px_50px_rgba(0,0,0,0.3)] transition-all duration-1000"
-                style={{
-                  backgroundImage: `url(${slide.image})`,
-                }}
-              ></div>
+                style={{ backgroundImage: `url(${slide.image})` }}
+              />
             ))}
           </div>
 
-          {/*Fixed content (stays in one place) */}
-          <div className="absolute top-1/2 left-[100px] -translate-y-1/2 text-left text-white w-[400px] z-[200]">
+          {/* Fixed content (stays in one place) */}
+          <div className="fixed-content absolute top-1/2 -translate-y-1/2 text-left text-white left-4 sm:left-8 md:left-[100px] w-[90%] sm:w-[70%] md:w-[400px] z-[200] pointer-events-auto">
             <motion.div
               key={`title-${currentSlideIndex}`}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3, duration: 1, ease: "easeInOut" }}
-              className="text-[100px] font-bold uppercase text-[rgba(255,255,255,1)] leading-none"
+              className="font-bold uppercase leading-none text-[32px] sm:text-[44px] md:text-[60px] lg:text-[100px]"
             >
               {slides[currentSlideIndex]?.title}
             </motion.div>
@@ -572,7 +571,7 @@ const BookTrekPage = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4, duration: 1, ease: "easeInOut" }}
-              className="text-[100px] font-bold uppercase text-white drop-shadow-md leading-none"
+              className="font-bold uppercase text-white drop-shadow-md leading-none mt-0 text-[32px] sm:text-[44px] md:text-[60px] lg:text-[100px]"
             >
               {slides[currentSlideIndex]?.name}
             </motion.div>
@@ -582,7 +581,7 @@ const BookTrekPage = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5, duration: 1, ease: "easeInOut" }}
-              className="mt-2 mb-4 text-lg text-gray-200"
+              className="mt-2 mb-4 text-base sm:text-lg text-gray-200 max-w-full md:max-w-md"
             >
               {slides[currentSlideIndex]?.desc}
             </motion.p>
@@ -592,34 +591,31 @@ const BookTrekPage = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6, duration: 1, ease: "easeInOut" }}
-              className="space-x-4 "
+              className="flex items-center space-x-4"
             >
-              <button
-                className=" h-[35px] w-[35px] bg-orange-400 text-black font-semibold border-2 rounded-full border-white
-               hover:bg-[rgba(104,145,124,1)] flex flex-col justify-center items-center hover:text-white transition-all"
-              >
+              <button className="h-[35px] w-[35px] bg-orange-400 text-black font-semibold border-2 rounded-full border-white hover:bg-[rgba(104,145,124,1)] flex justify-center items-center hover:text-white transition-all">
                 <img
                   src="/SVG/bookmark.svg"
-                  className=" h-[20px] w-[20px] "
+                  className="h-[20px] w-[20px]"
                   alt=""
                 />
               </button>
-              <button className=" h-[35px] w-[130px] bg-transparent border border-white/80 text-white font-syne font-medium text-sm mx-12 hover:bg-[rgba(104,145,124,1)] rounded-full hover:text-white transition-all absolute bottom-0 left-8">
+              <button className="h-[35px] min-w-[110px] bg-transparent border border-white/80 text-white font-syne font-medium text-sm px-4 py-1 hover:bg-[rgba(104,145,124,1)] rounded-full hover:text-white transition-all">
                 Know More
               </button>
             </motion.div>
           </div>
 
           {/* Arrows */}
-          <div className="arrows absolute top-[80%] right-[52%] flex gap-3 z-[100]">
+          <div className="arrows absolute bottom-8 md:top-[80%] md:right-[48%] right-4 flex gap-3 z-[100]">
             <button
-              className="prev w-[50px] h-[50px] rounded-full bg-[rgba(139,115,85,1)] text-white font-bold hover:bg-white hover:text-black transition"
+              className="prev w-[44px] h-[44px] md:w-[50px] md:h-[50px] rounded-full bg-[rgba(139,115,85,1)] text-white font-bold hover:bg-white hover:text-black transition"
               onClick={() => showSlider("prev")}
             >
               {"<"}
             </button>
             <button
-              className="next w-[50px] h-[50px] rounded-full bg-[rgba(139,115,85,1)] text-white font-bold hover:bg-white hover:text-black transition"
+              className="next w-[44px] h-[44px] md:w-[50px] md:h-[50px] rounded-full bg-[rgba(139,115,85,1)] text-white font-bold hover:bg-white hover:text-black transition"
               onClick={() => showSlider("next")}
             >
               {">"}
@@ -629,35 +625,60 @@ const BookTrekPage = () => {
           <div
             ref={runningTimeRef}
             className="absolute top-0 left-0 h-[2px] bg-yellow-400 z-[1000]"
-          ></div>
+          />
         </div>
-
         <style>{`
-        @keyframes runningTime {
-          from { width: 0%; }
-          to { width: 100%; }
-        }
-        @keyframes animate {
-          from { opacity: 0; transform: translateY(100px); filter: blur(33px); }
-          to { opacity: 1; transform: translateY(0); filter: blur(0); }
-        }
+            @keyframes runningTime { from { width: 0%; } to { width: 100%; } }
+            @keyframes animate { from { opacity: 0; transform: translateY(100px); filter: blur(33px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
 
-        .carousel .list .item:nth-child(1),
-        .carousel .list .item:nth-child(2) {
-          top: 0; left: 0; width: 100%; height: 100%;
-          transform: translate(0, 0); border-radius: 0;
-        }
-        .carousel .list .item:nth-child(3) { top: 80%; left: 67%; transform: translateY(-70%); width: 180px; height: 250px; }
-        .carousel .list .item:nth-child(4) { top: 80%; left: calc(67% + 200px); transform: translateY(-70%); width: 180px; height: 250px; }
-        .carousel .list .item:nth-child(5) { top: 80%; left: calc(67% + 400px); transform: translateY(-70%); width: 180px; height: 250px; }
-        .carousel .list .item:nth-child(6) { top: 80%; left: calc(67% + 600px); transform: translateY(-70%); width: 180px; height: 250px; }
-        .carousel .list .item:nth-child(n+7) { left: calc(67% + 800px); opacity: 0; }
+            .carousel .list .item:nth-child(1),
+            .carousel .list .item:nth-child(2) {
+              top: 0; left: 0; width: 100%; height: 100%;
+              transform: translate(0, 0); border-radius: 0;
+            }
+            .carousel .list .item:nth-child(3) { top: 80%; left: 67%; transform: translateY(-70%); width: 180px; height: 250px; }
+            .carousel .list .item:nth-child(4) { top: 80%; left: calc(67% + 200px); transform: translateY(-70%); width: 180px; height: 250px; }
+            .carousel .list .item:nth-child(5) { top: 80%; left: calc(67% + 400px); transform: translateY(-70%); width: 180px; height: 250px; }
+            .carousel .list .item:nth-child(6) { top: 80%; left: calc(67% + 600px); transform: translateY(-70%); width: 180px; height: 250px; }
+            .carousel .list .item:nth-child(n+7) { left: calc(67% + 800px); opacity: 0; }
 
-        .carousel.next .list .item:nth-child(1),
-        .carousel.prev .list .item:nth-child(1) { transition: 1s; }
-        .carousel .list .item:nth-child(2) .content { display: block !important; }
-      `}</style>
+            .carousel.next .list .item:nth-child(1),
+            .carousel.prev .list .item:nth-child(1) { transition: 1s; }
+            .carousel .list .item:nth-child(2) .content { display: block !important; }
+
+            @media (max-width: 640px) {
+              .carousel .list .item:nth-child(3),
+              .carousel .list .item:nth-child(4),
+              .carousel .list .item:nth-child(5),
+              .carousel .list .item:nth-child(6) {
+                position: relative;
+                top: auto; left: auto; bottom: 8px;
+                width: 120px; height: 160px; transform: none;
+                margin-right: 8px; display: inline-block; opacity: 0.95; 
+              }
+              .carousel .list { display: flex; align-items: flex-end; gap: 8px; padding-bottom: 140px; }
+              .carousel .list .item:nth-child(1), .carousel .list .item:nth-child(2) { height: 100%; border-radius: 0; }
+              .carousel .fixed-content { left: 12px !important; width: calc(100% - 24px) !important; top: 45% !important; transform: translateY(-40%) !important; }
+            }
+
+            @media (min-width: 641px) and (max-width: 1024px) {
+              .carousel .list .item:nth-child(3),
+              .carousel .list .item:nth-child(4),
+              .carousel .list .item:nth-child(5),
+              .carousel .list .item:nth-child(6) { top: 78%; width: 150px; height: 210px; transform: translateY(-65%); }
+              .carousel .list .item:nth-child(3) { left: 55%; }
+              .carousel .list .item:nth-child(4) { left: calc(55% + 170px); }
+              .carousel .list .item:nth-child(5) { left: calc(55% + 340px); }
+              .carousel .list .item:nth-child(6) { left: calc(55% + 510px); }
+             .carousel .fixed-content { left: 12px !important; width: calc(100% - 24px) !important; top: 30% !important; transform: translateY(-40%) !important; }
+            }
+
+            @media (min-width: 1025px) {
+              .carousel .fixed-content { left: 100px !important; width: 400px !important; }
+            }
+          `}</style>
       </div>
+
       <div className="relative w-full flex flex-col py-10">
         <div className="fixed inset-0 z-[-1] bg-cover bg-[#F5F4F0] bg-top"></div>
 

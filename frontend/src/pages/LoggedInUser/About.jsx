@@ -180,7 +180,7 @@ const About = () => {
               Home
             </Link>
             <Link
-              to="/explore"
+              to="/book-trek"
               className="hover:text-[rgba(104,145,124,1)]"
               onClick={() => setIsOpen(false)}
             >

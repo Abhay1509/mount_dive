@@ -64,9 +64,9 @@ function App() {
         <Route
           path="/book-trek"
           element={
-            <PrivateRoute>
+           
               <BookTrekPage />
-            </PrivateRoute>
+           
           }
         />
         <Route

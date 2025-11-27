@@ -150,6 +150,20 @@ const BookNow = () => {
 
   const visibleThumbnails = images.slice(0, 4);
   const remainingCount = images.length - visibleThumbnails.length;
+  if (!user) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+        <h1 className="text-2xl font-bold text-red-500 mb-4">Access Denied</h1>
+        <p className="text-gray-700 mb-6">You need to log in to book a trek.</p>
+        <button
+          onClick={() => navigate("/auth/login")}
+          className="px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
+        >
+          Go to Login
+        </button>
+      </div>
+    );
+  }
   return (
     <>
       <div className="bg-[#F5F4F0]"></div>
@@ -532,19 +546,27 @@ const BookNow = () => {
           <div className="flex flex-wrap mt-6 gap-3">
             <div className="w-full sm:w-[48%] md:w-[223px] h-[100px] bg-[#E5E3DC] rounded-lg flex flex-col justify-center items-center gap-2">
               <h3 className="text-[#666666] text-sm">Duration</h3>
-              <p className="text-[#3B3B3B] text-xl font-syne">{trek?.duration}</p>
+              <p className="text-[#3B3B3B] text-xl font-syne">
+                {trek?.duration}
+              </p>
             </div>
             <div className="w-full sm:w-[48%] md:w-[223px] h-[100px] bg-[#E5E3DC] rounded-lg flex flex-col justify-center items-center gap-2">
               <h3 className="text-[#666666] text-sm">Difficulty</h3>
-              <p className="text-[#3B3B3B] text-xl font-syne">{trek?.difficulty}</p>
+              <p className="text-[#3B3B3B] text-xl font-syne">
+                {trek?.difficulty}
+              </p>
             </div>
             <div className="w-full sm:w-[48%] md:w-[223px] h-[100px] bg-[#E5E3DC] rounded-lg flex flex-col justify-center items-center gap-2">
               <h3 className="text-[#666666] text-sm">Altitude</h3>
-              <p className="text-[#3B3B3B] text-xl font-syne">{trek?.altitude}</p>
+              <p className="text-[#3B3B3B] text-xl font-syne">
+                {trek?.altitude}
+              </p>
             </div>
             <div className="w-full sm:w-[48%] md:w-[223px] h-[100px] bg-[#E5E3DC] rounded-lg flex flex-col justify-center items-center gap-2">
               <h3 className="text-[#666666] text-sm">Best Season</h3>
-              <p className="text-[#3B3B3B] text-xl font-syne">{trek?.bestSeason}</p>
+              <p className="text-[#3B3B3B] text-xl font-syne">
+                {trek?.bestSeason}
+              </p>
             </div>
           </div>
 
@@ -676,7 +698,9 @@ const BookNow = () => {
           <div className="xl:sticky xl:top-24 space-y-5">
             <div className="w-full h-[298px] border border-gray-300 rounded-lg flex flex-col items-center">
               <p className="text-sm text-gray-500 mt-8">PRICE</p>
-              <h2 className="text-3xl font-bold text-[#3B3B3B] mt-2">₹{trek?.price}/-</h2>
+              <h2 className="text-3xl font-bold text-[#3B3B3B] mt-2">
+                ₹{trek?.price}/-
+              </h2>
               <p className="text-sm text-gray-500 mb-4">per person</p>
 
               <button
