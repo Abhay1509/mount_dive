@@ -18,13 +18,13 @@ const transporter = nodemailer.createTransport({
     pass: process.env.SMTP_PASS,
   },
   tls: {
-    rejectUnauthorized: false
-  }
+    rejectUnauthorized: false,
+  },
 });
-
 
 // 1️⃣ Send OTP
 export const sendOtp = async (req, res) => {
+  console.log("🔥 sendOtp route hit", req.body);
   try {
     const { name, email, phone, password } = req.body;
 
