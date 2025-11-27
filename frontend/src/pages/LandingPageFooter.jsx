@@ -70,7 +70,7 @@ const LandingPageFooter = () => {
       <div className="border-t border-gray-700 pt-6 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
         <p>© {new Date().getFullYear()} MountDive. All Rights Reserved</p>
         <div className="flex gap-4 mt-4 md:mt-0">
-          <img src="/visa.png" alt="Visa" className="h-6" />
+          <img src="/SVG/visa.png" alt="Visa" className="h-6" />
           <img src="/mastercard.png" alt="MasterCard" className="h-6" />
           <img src="/paypal.png" alt="PayPal" className="h-6" />
           <img src="/applepay.png" alt="ApplePay" className="h-6" />
