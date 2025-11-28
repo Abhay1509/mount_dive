@@ -73,7 +73,7 @@ export const sendOtp = async (req, res) => {
         // });
 
         await brevo.sendTransacEmail({
-          sender: { email: "9cb51a001@smtp-brevo.com", name: "MountDive" },
+          sender: { email: "mountdive001@gmail.com", name: "MountDive" },
           to: [{ email }],
           subject: "Your OTP for MountDive Signup",
           htmlContent: `
