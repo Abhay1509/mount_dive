@@ -107,7 +107,9 @@ const BookTrekPage = () => {
   useEffect(() => {
     const fetchTreks = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/treks");
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/treks`
+        );
         setTreks(res.data);
       } catch (err) {
         console.error("Error fetching treks:", err);

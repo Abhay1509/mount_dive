@@ -92,7 +92,7 @@ const BookNow = () => {
   useEffect(() => {
     const fetchTrek = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/treks/${id}`);
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/treks/${id}`);
         setTrek(res.data);
         console.log("Trek data:", res.data);
       } catch (err) {

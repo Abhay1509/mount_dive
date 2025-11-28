@@ -23,7 +23,7 @@ const AdminTreksPage = () => {
   // Fetch all treks
   const fetchTreks = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/treks");
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/treks`);
       setTreks(res.data);
     } catch (err) {
       console.error(err);
@@ -109,7 +109,7 @@ const AdminTreksPage = () => {
     try {
       if (editingId) {
         await axios.put(
-          `{import.meta.env.VITE_API_URL}/api/treks/${editingId}`,
+          `${import.meta.env.VITE_API_URL}/api/treks/${editingId}`,
           payload
         );
       } else {
@@ -163,7 +163,7 @@ const AdminTreksPage = () => {
   // Delete trek
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this trek?")) {
-      await axios.delete(`http://localhost:5000/api/treks/${id}`);
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/treks/${id}`);
       fetchTreks();
     }
   };

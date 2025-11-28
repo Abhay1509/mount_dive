@@ -18,6 +18,8 @@ app.use(
       "https://mountdive.com",
       "https://www.mountdive.com",
       "https://mount-dive.onrender.com",
+      "https://mount-dive-mountdives-projects.vercel.app/",
+      "https://mount-dive.vercel.app/",
     ], // frontend URL
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
