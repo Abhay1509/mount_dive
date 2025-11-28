@@ -7,6 +7,8 @@ import nodemailer from "nodemailer";
 import { setOTP, verifyOTP } from "../utils/otpStore.js";
 import admin from "../firebaseAdmin.js";
 import jwt from "jsonwebtoken";
+import SibApiV3Sdk from "sib-api-v3-sdk";
+
 
 // Email transporter
 // const transporter = nodemailer.createTransport({
@@ -22,15 +24,30 @@ import jwt from "jsonwebtoken";
 //   },
 // });
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT), // 587
-  secure: false, // TLS for port 587
-  auth: {
-    user: process.env.SMTP_EMAIL,
-    pass: process.env.SMTP_PASS,
-  },
-});
+// const transporter = nodemailer.createTransport({
+//   host: process.env.SMTP_HOST,
+//   port: Number(process.env.SMTP_PORT), // 587
+//   secure: false, // TLS for port 587
+//   auth: {
+//     user: process.env.SMTP_EMAIL,
+//     pass: process.env.SMTP_PASS,
+//   },
+// });
+
+// Brevo Email API Setup
+
+// const SibApiV3Sdk = require("sib-api-v3-sdk");
+
+let defaultClient = SibApiV3Sdk.ApiClient.instance;
+let apiKey = defaultClient.authentications["api-key"];
+apiKey.apiKey = process.env.BREVO_API_KEY;
+
+
+const brevo = new SibApiV3Sdk.TransactionalEmailsApi();
+// brevo.setApiKey(
+//   SibApiV3Sdk.TransactionalEmailsApiApiKeys.apiKey,
+//   process.env.BREVO_API_KEY
+// );
 
 // 1️⃣ Send OTP
 export const sendOtp = async (req, res) => {
@@ -48,11 +65,21 @@ export const sendOtp = async (req, res) => {
       setOTP(email, otp, { name, email, phone, password });
 
       try {
-        await transporter.sendMail({
-          from: process.env.SMTP_EMAIL,
-          to: email,
+        // await transporter.sendMail({
+        //   from: process.env.SMTP_EMAIL,
+        //   to: email,
+        //   subject: "Your OTP for MountDive Signup",
+        //   text: `Your verification code is ${otp}. It expires in 5 minutes.`,
+        // });
+
+        await brevo.sendTransacEmail({
+          sender: { email: "9cb51a001@smtp-brevo.com", name: "MountDive" },
+          to: [{ email }],
           subject: "Your OTP for MountDive Signup",
-          text: `Your verification code is ${otp}. It expires in 5 minutes.`,
+          htmlContent: `
+          <p>Your OTP is: <strong>${otp}</strong></p>
+          <p>Valid for 5 minutes.</p>
+          `,
         });
       } catch (err) {
         console.error("EMAIL SEND ERROR:", err);
