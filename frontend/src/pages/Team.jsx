@@ -62,7 +62,7 @@ export default function Team() {
   return (
     <section id="team" className="py-20 px-6 md:px-16 bg-gray-50 text-center">
       <h2 className="text-3xl font-bold mb-4 text-gray-900">
-        Meet Our <span className="text-[#68917C]">Hiking Team</span>
+        Meet Our <span className="text-[#68917C]">Team</span>
       </h2>
       <p className="text-gray-600 mb-12 max-w-2xl mx-auto">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.

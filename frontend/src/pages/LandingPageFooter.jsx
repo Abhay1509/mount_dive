@@ -1,5 +1,10 @@
 import React from "react";
-import { FaFacebookF, FaInstagram, FaTwitter, FaPinterestP } from "react-icons/fa";
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaTwitter,
+  FaPinterestP,
+} from "react-icons/fa";
 
 const LandingPageFooter = () => {
   return (
@@ -9,22 +14,60 @@ const LandingPageFooter = () => {
         <div>
           <h3 className="text-lg font-semibold text-white mb-4">Links</h3>
           <ul className="space-y-3 text-sm">
-            <li><a href="#home" className="hover:text-[#68917C] transition">Home</a></li>
-            <li><a href="#services" className="hover:text-[#68917C] transition">Services</a></li>
-            <li><a href="#story" className="hover:text-[#68917C] transition">Our Story</a></li>
-            <li><a href="#blog" className="hover:text-[#68917C] transition">Blog</a></li>
-            <li><a href="#event" className="hover:text-[#68917C] transition">Event</a></li>
+            <li>
+              <a href="#home" className="hover:text-[#68917C] transition">
+                Home
+              </a>
+            </li>
+            <li>
+              <a href="#services" className="hover:text-[#68917C] transition">
+                Services
+              </a>
+            </li>
+            <li>
+              <a href="#story" className="hover:text-[#68917C] transition">
+                Our Story
+              </a>
+            </li>
+            <li>
+              <a href="#blog" className="hover:text-[#68917C] transition">
+                Blog
+              </a>
+            </li>
+            <li>
+              <a href="#event" className="hover:text-[#68917C] transition">
+                Event
+              </a>
+            </li>
           </ul>
         </div>
 
         {/* Our Services */}
         <div>
-          <h3 className="text-lg font-semibold text-white mb-4">Our Services</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">
+            Our Services
+          </h3>
           <ul className="space-y-3 text-sm">
-            <li><a href="#" className="hover:text-[#68917C] transition">Contact Us</a></li>
-            <li><a href="#" className="hover:text-[#68917C] transition">Terms of Service</a></li>
-            <li><a href="#" className="hover:text-[#68917C] transition">Privacy Policy</a></li>
-            <li><a href="#" className="hover:text-[#68917C] transition">Returns & Refunds</a></li>
+            <li>
+              <a href="#" className="hover:text-[#68917C] transition">
+                Contact Us
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:text-[#68917C] transition">
+                Terms of Service
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:text-[#68917C] transition">
+                Privacy Policy
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:text-[#68917C] transition">
+                Returns & Refunds
+              </a>
+            </li>
           </ul>
         </div>
 
@@ -32,16 +75,28 @@ const LandingPageFooter = () => {
         <div>
           <h3 className="text-lg font-semibold text-white mb-4">Follow Us</h3>
           <div className="flex gap-4">
-            <a href="#" className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-blue-500 transition">
+            <a
+              href="#"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-blue-500 transition"
+            >
               <FaFacebookF />
             </a>
-            <a href="#" className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-pink-500 transition">
+            <a
+              href="#"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-pink-500 transition"
+            >
               <FaInstagram />
             </a>
-            <a href="#" className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-sky-400 transition">
+            <a
+              href="#"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-sky-400 transition"
+            >
               <FaTwitter />
             </a>
-            <a href="#" className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-red-500 transition">
+            <a
+              href="#"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-red-500 transition"
+            >
               <FaPinterestP />
             </a>
           </div>
@@ -49,17 +104,20 @@ const LandingPageFooter = () => {
 
         {/* Newsletter */}
         <div>
-          <h3 className="text-lg font-semibold text-white mb-4">Don’t Miss Out!</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">
+            Don’t Miss Out!
+          </h3>
           <p className="text-sm text-gray-400 mb-4">
             Sign up for email updates from Mountain & Hiking
           </p>
-          <div className="flex">
+          <div className="flex w-full max-w-md rounded-full border border-gray-300 overflow-hidden bg-white">
             <input
               type="email"
               placeholder="Enter Email Address..."
-              className="w-full px-4 py-2 rounded-l-md text-gray-800 focus:outline-none"
+              className="flex-1 px-4 py-2 text-sm bg-white text-gray-800 focus:outline-none"
             />
-            <button className="bg-[#8B7355] px-5 py-2 rounded-r-md hover:bg-[#68917C] transition">
+
+            <button className="bg-[#8B7355] text-white text-sm py-2 pl-4 pr-6 whitespace-nowrap hover:bg-[#6f5c45] transition flex items-center justify-center min-w-[90px]">
               Sign In
             </button>
           </div>
