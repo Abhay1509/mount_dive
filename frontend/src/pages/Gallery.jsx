@@ -34,11 +34,11 @@ const Gallery = () => {
       </div>
 
       {/* Button */}
-      <div className="mt-12">
+      {/* <div className="mt-12">
         <button className="px-8 py-3 bg-[#8B7355] text-white font-semibold rounded-full shadow-lg hover:bg-[#68917C] transition">
           See All Pictures
         </button>
-      </div>
+      </div> */}
     </section>
   );
 };
