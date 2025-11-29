@@ -92,7 +92,9 @@ const BookNow = () => {
   useEffect(() => {
     const fetchTrek = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/treks/${id}`);
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/treks/${id}`
+        );
         setTrek(res.data);
         console.log("Trek data:", res.data);
       } catch (err) {
@@ -150,20 +152,20 @@ const BookNow = () => {
 
   const visibleThumbnails = images.slice(0, 4);
   const remainingCount = images.length - visibleThumbnails.length;
-  if (!user) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-        <h1 className="text-2xl font-bold text-red-500 mb-4">Access Denied</h1>
-        <p className="text-gray-700 mb-6">You need to log in to book a trek.</p>
-        <button
-          onClick={() => navigate("/auth/login")}
-          className="px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
-        >
-          Go to Login
-        </button>
-      </div>
-    );
-  }
+  // if (!user) {
+  //   return (
+  //     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+  //       <h1 className="text-2xl font-bold text-red-500 mb-4">Access Denied</h1>
+  //       <p className="text-gray-700 mb-6">You need to log in to book a trek.</p>
+  //       <button
+  //         onClick={() => navigate("/auth/login")}
+  //         className="px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
+  //       >
+  //         Go to Login
+  //       </button>
+  //     </div>
+  //   );
+  // }
   return (
     <>
       <div className="bg-[#F5F4F0]"></div>
@@ -705,7 +707,13 @@ const BookNow = () => {
 
               <button
                 className="w-[300px] bg-[#8F6E56] text-white py-2 rounded-md hover:bg-[rgba(104,145,124,0.9)] transition mt-2"
-                onClick={() => setShowTerms(true)}
+                onClick={() => {
+                  if (!user) {
+                    navigate(`/auth/login?redirect=/book-now/${id}`);
+                    return;
+                  }
+                  setShowTerms(true);
+                }}
               >
                 Book now
               </button>
