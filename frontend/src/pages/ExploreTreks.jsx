@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const ExploreTreks = () => {
   const [treks, setTreks] = useState([]); // ✅ will come from API
@@ -9,11 +10,15 @@ const ExploreTreks = () => {
   const [startIndex, setStartIndex] = useState(0);
   const [cardsPerView, setCardsPerView] = useState(4);
 
+  const navigate = useNavigate();
+
   // ✅ Fetch trek data from backend API
   useEffect(() => {
     const fetchTreks = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/treks`);
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/treks`
+        );
         setTreks(response.data);
       } catch (error) {
         console.error("Error fetching treks:", error);
@@ -39,6 +44,10 @@ const ExploreTreks = () => {
     window.addEventListener("resize", updateCardsPerView);
     return () => window.removeEventListener("resize", updateCardsPerView);
   }, []);
+
+  const handleCardClick = (trekId) => {
+    navigate(`/book-now/${trekId}`);
+  };
 
   // ✅ Navigation
   const handlePrev = () => {
@@ -90,6 +99,7 @@ const ExploreTreks = () => {
             {treks.map((trek, index) => (
               <motion.div
                 key={trek._id || index}
+                onClick={() => handleCardClick(trek._id)}
                 className="relative rounded-2xl shadow-lg cursor-pointer flex-shrink-0 w-72 h-96 bg-white"
                 whileHover={{
                   scale: 1.05,

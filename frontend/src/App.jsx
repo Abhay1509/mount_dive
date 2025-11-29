@@ -61,22 +61,8 @@ function App() {
             </PrivateRoute>
           }
         />
-        <Route
-          path="/book-trek"
-          element={
-           
-              <BookTrekPage />
-           
-          }
-        />
-        <Route
-          path="/book-now/:id"
-          element={
-            <PrivateRoute>
-              <BookNow />
-            </PrivateRoute>
-          }
-        />
+        <Route path="/book-trek" element={<BookTrekPage />} />
+        <Route path="/book-now/:id" element={<BookNow />} />
         <Route
           path="/Profile"
           element={

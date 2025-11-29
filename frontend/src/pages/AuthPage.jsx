@@ -150,9 +150,12 @@ const AuthPage = () => {
               <FormComponent
                 contactMethod={contactMethod}
                 onSuccess={(data) => {
-                  // ✅ Save user session instantly
                   if (data?.token) login(data.token, data.user);
-                  navigate(current.redirect);
+
+                  const params = new URLSearchParams(window.location.search);
+                  const redirectTo = params.get("redirect") || current.redirect;
+
+                  navigate(redirectTo);
                 }}
               />
 
