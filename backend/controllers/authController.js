@@ -116,12 +116,12 @@ export const verifyOtp = async (req, res) => {
       if (!userData)
         return res.status(400).json({ message: "Invalid or expired OTP" });
 
-      const hashedPassword = await bcrypt.hash(userData.password, 10);
+      // const hashedPassword = await bcrypt.hash(userData.password, 10);
       const user = await User.create({
         name: userData.name,
         email: userData.email,
         phone: userData.phone,
-        password: hashedPassword,
+        password: userData.password,
       });
 
       return res.status(201).json({
