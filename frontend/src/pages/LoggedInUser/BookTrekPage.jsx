@@ -522,14 +522,14 @@ const BookTrekPage = () => {
           {/* FLOATING FILTER BUTTON (MOBILE/TABLET) */}
           <button
             onClick={() => setShowFiltersPopup(true)}
-            className="lg:hidden fixed bottom-5 right-5 z-40 
+            className="lg:hidden fixed bottom-5 right-5 z-[1100] 
              w-12 h-12 rounded-full bg-[#8F6E56] 
              shadow-lg flex items-center justify-center"
           >
             <img src="/SVG/filter.svg" alt="Filters" className="w-5 h-5" />
           </button>
           {showFiltersPopup && (
-            <div className="lg:hidden fixed inset-0 z-50 bg-black/40">
+            <div className="lg:hidden fixed inset-0 z-[1100] bg-black/40">
               <div className="absolute bottom-5 right-5 w-[90vw] max-w-[360px]">
                 <FilterPanel
                   dateFrom={dateFrom}
