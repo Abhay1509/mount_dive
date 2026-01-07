@@ -16,6 +16,10 @@ const AdminTreksPage = () => {
     bestSeason: "",
     description: "",
     itinerary: [{ day: "", details: [""] }],
+    highlights: [""],
+    inclusions: [""],
+    exclusions: [""],
+    addOns: [""],
   });
 
   const [editingId, setEditingId] = useState(null);
@@ -82,6 +86,23 @@ const AdminTreksPage = () => {
     setFormData({ ...formData, itinerary: updated });
   };
 
+  const handleListChange = (field, index, value) => {
+    const updated = [...formData[field]];
+    updated[index] = value;
+    setFormData({ ...formData, [field]: updated });
+  };
+
+  const addListItem = (field) => {
+    setFormData({ ...formData, [field]: [...formData[field], ""] });
+  };
+
+  const removeListItem = (field, index) => {
+    const updated = formData[field].filter((_, i) => i !== index);
+    setFormData({ ...formData, [field]: updated });
+  };
+
+  const cleanList = (list) => list.filter((item) => item && item.trim() !== "");
+
   // CLEAN + SUBMIT
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -104,6 +125,10 @@ const AdminTreksPage = () => {
       ...formData,
       images: cleanImages,
       itinerary: cleanItinerary,
+      highlights: cleanList(formData.highlights),
+      inclusions: cleanList(formData.inclusions),
+      exclusions: cleanList(formData.exclusions),
+      addOns: cleanList(formData.addOns),
     };
 
     try {
@@ -139,6 +164,10 @@ const AdminTreksPage = () => {
       bestSeason: "",
       description: "",
       itinerary: [{ day: "", details: [""] }],
+      highlights: [""],
+      inclusions: [""],
+      exclusions: [""],
+      addOns: [""],
     });
   };
 
@@ -147,16 +176,19 @@ const AdminTreksPage = () => {
     setEditingId(trek._id);
     setFormData({
       ...trek,
-      images:
-        trek.images && trek.images.length > 0 ? trek.images : [""],
+      images: trek.images && trek.images.length > 0 ? trek.images : [""],
       itinerary:
         trek.itinerary && trek.itinerary.length > 0
           ? trek.itinerary.map((d) => ({
               day: d.day || "",
-              details:
-                d.details && d.details.length > 0 ? d.details : [""],
+              details: d.details && d.details.length > 0 ? d.details : [""],
             }))
           : [{ day: "", details: [""] }],
+
+      highlights: trek.highlights?.length ? trek.highlights : [""],
+      inclusions: trek.inclusions?.length ? trek.inclusions : [""],
+      exclusions: trek.exclusions?.length ? trek.exclusions : [""],
+      addOns: trek.addOns?.length ? trek.addOns : [""],
     });
   };
 
@@ -319,9 +351,7 @@ const AdminTreksPage = () => {
               <input
                 key={i}
                 value={detail}
-                onChange={(e) =>
-                  handleDetailChange(index, i, e.target.value)
-                }
+                onChange={(e) => handleDetailChange(index, i, e.target.value)}
                 placeholder="Detail"
                 className="border p-2 rounded w-full mt-1"
               />
@@ -336,6 +366,127 @@ const AdminTreksPage = () => {
             </button>
           </div>
         ))}
+
+        <h3 className="font-semibold mt-6">Highlights</h3>
+        {formData.highlights.map((item, i) => (
+          <div key={i} className="flex gap-2 mt-2">
+            <input
+              value={item}
+              onChange={(e) =>
+                handleListChange("highlights", i, e.target.value)
+              }
+              placeholder="Highlight point"
+              className="border p-2 rounded w-full"
+            />
+            {i > 0 && (
+              <button
+                type="button"
+                onClick={() => removeListItem("highlights", i)}
+                className="bg-red-500 text-white px-3 rounded"
+              >
+                X
+              </button>
+            )}
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={() => addListItem("highlights")}
+          className="text-blue-600 mt-2"
+        >
+          + Add Highlight
+        </button>
+
+        {/* Inclusions */}
+        <h3 className="font-semibold mt-6">Inclusions</h3>
+        {formData.inclusions.map((item, i) => (
+          <div key={i} className="flex gap-2 mt-2">
+            <input
+              value={item}
+              onChange={(e) =>
+                handleListChange("inclusions", i, e.target.value)
+              }
+              placeholder="Inclusion point"
+              className="border p-2 rounded w-full"
+            />
+            {i > 0 && (
+              <button
+                type="button"
+                onClick={() => removeListItem("inclusions", i)}
+                className="bg-red-500 text-white px-3 rounded"
+              >
+                X
+              </button>
+            )}
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={() => addListItem("inclusions")}
+          className="text-blue-600 mt-2"
+        >
+          + Add Inclusion
+        </button>
+
+        {/* Exclusions */}
+        <h3 className="font-semibold mt-6">Exclusions</h3>
+        {formData.exclusions.map((item, i) => (
+          <div key={i} className="flex gap-2 mt-2">
+            <input
+              value={item}
+              onChange={(e) =>
+                handleListChange("exclusions", i, e.target.value)
+              }
+              placeholder="Exclusion point"
+              className="border p-2 rounded w-full"
+            />
+            {i > 0 && (
+              <button
+                type="button"
+                onClick={() => removeListItem("exclusions", i)}
+                className="bg-red-500 text-white px-3 rounded"
+              >
+                X
+              </button>
+            )}
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={() => addListItem("exclusions")}
+          className="text-blue-600 mt-2"
+        >
+          + Add Exclusion
+        </button>
+
+        {/* Add-Ons */}
+        <h3 className="font-semibold mt-6">Add-Ons</h3>
+        {formData.addOns.map((item, i) => (
+          <div key={i} className="flex gap-2 mt-2">
+            <input
+              value={item}
+              onChange={(e) => handleListChange("addOns", i, e.target.value)}
+              placeholder="Add-on point"
+              className="border p-2 rounded w-full"
+            />
+            {i > 0 && (
+              <button
+                type="button"
+                onClick={() => removeListItem("addOns", i)}
+                className="bg-red-500 text-white px-3 rounded"
+              >
+                X
+              </button>
+            )}
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={() => addListItem("addOns")}
+          className="text-blue-600 mt-2"
+        >
+          + Add Add-On
+        </button>
 
         <button
           type="button"

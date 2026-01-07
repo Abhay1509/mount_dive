@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 import FilterPanel from "./FilterPanel";
 import Navbar from "./Navbar";
 import axios from "axios";
+import { useSearchParams } from "react-router-dom";
 
 const slides = [
   {
@@ -137,11 +138,16 @@ const BookTrekPage = () => {
   const [maxPriceFilter, setMaxPriceFilter] = useState(50000);
   const [selectedLocation, setSelectedLocation] = useState("All");
   const [sortByPrice, setSortByPrice] = useState("none"); // "none" | "low" | "high"
+  const [searchParams] = useSearchParams();
+  const typeFromURL = searchParams.get("type");
 
-  // useEffect(() => {
-  //   setTreks(HARD_CODED_TREKS);
-  //   setLoading(false);
-  // }, []);
+  useEffect(() => {
+    if (typeFromURL) {
+      setSelectedType(typeFromURL);
+    } else {
+      setSelectedType("All");
+    }
+  }, [typeFromURL]);
 
   useEffect(() => {
     console.log("🟡 useEffect triggered");
@@ -354,7 +360,7 @@ const BookTrekPage = () => {
     <>
       <div className="relative w-screen h-screen overflow-hidden bg-black text-white font-[Poppins]">
         {/* Header */}
-        <Navbar/>
+        <Navbar />
 
         {/* Carousel */}
         <div

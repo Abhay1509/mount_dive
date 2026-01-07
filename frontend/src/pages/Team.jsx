@@ -31,8 +31,14 @@ const teamMembers = [
 
 // Variants
 const overlayVariants = {
-  hidden: { opacity: 0, transition: { duration: 0.28, ease: [0.22, 1, 0.36, 1] } },
-  visible: { opacity: 1, transition: { duration: 0.36, ease: [0.22, 1, 0.36, 1] } },
+  hidden: {
+    opacity: 0,
+    transition: { duration: 0.28, ease: [0.22, 1, 0.36, 1] },
+  },
+  visible: {
+    opacity: 1,
+    transition: { duration: 0.36, ease: [0.22, 1, 0.36, 1] },
+  },
 };
 
 const iconsContainerVariants = {
@@ -65,7 +71,9 @@ export default function Team() {
         Meet Our <span className="text-[#68917C]">Team</span>
       </h2>
       <p className="text-gray-600 mb-12 max-w-2xl mx-auto">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        Meet the people who turn your adventures into unforgettable memories.
+        Our experienced guides and planners are united by a shared love for the
+        mountains and responsible travel.
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
@@ -135,8 +143,12 @@ export default function Team() {
 
               {/* content */}
               <div className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900">{member.name}</h3>
-                <p className="text-[#68917C] text-sm font-medium">{member.role}</p>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  {member.name}
+                </h3>
+                <p className="text-[#68917C] text-sm font-medium">
+                  {member.role}
+                </p>
               </div>
             </div>
           );

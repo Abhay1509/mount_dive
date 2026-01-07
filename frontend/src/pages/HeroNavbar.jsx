@@ -55,7 +55,7 @@ const HeroNavbar = () => {
               Our Story
             </button>
           </li>
-          <li>
+          {/* <li>
             <button
               onClick={() => handleScroll("trips")}
               className="hover:text-[#68917C] transition"
@@ -70,7 +70,7 @@ const HeroNavbar = () => {
             >
               Event
             </button>
-          </li>
+          </li> */}
         </ul>
 
         {/* Desktop Auth/User Button */}
