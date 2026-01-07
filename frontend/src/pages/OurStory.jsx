@@ -21,10 +21,11 @@ const OurStory = () => {
             Our <span className="text-[#68917C]">Story</span>
           </h2>
           <p className="text-gray-600 leading-relaxed mb-6">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat.
+            What started as a small group of mountain lovers has grown into a
+            community of explorers. Mount Dive is not just about reaching
+            destinations—it’s about stories, friendships, and moments that stay
+            with you forever. Join us as we explore the raw beauty of nature,
+            one trail at a time.
           </p>
           <Link
             to="/about"

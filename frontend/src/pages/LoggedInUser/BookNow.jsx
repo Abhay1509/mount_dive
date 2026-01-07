@@ -484,7 +484,7 @@ const BookNow = () => {
               <InfoSection
                 number={tabOrder["Add-ons"]}
                 title="Add-ons"
-                items={trek?.addons}
+                items={trek?.addOns}
               />
             )}
           </div>

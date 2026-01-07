@@ -1,28 +1,47 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const services = [
   {
     title: "Hiking",
     img: "/assets/LandingHeroCarousel/bg1.webp",
+    description:
+      "Leisurely hikes through scenic trails, perfect for beginners and nature lovers.",
+    buttonText: "Explore Hikes",
+    route: "/book-trek?type=Hiking",
   },
   {
     title: "Camping",
     img: "/assets/LandingHeroCarousel/bg2.webp",
+    description:
+      "Camp under the stars with comfortable stays and unforgettable mountain nights.",
+    buttonText: "View Camps",
+    route: "/book-trek?type=Camping",
   },
   {
     title: "Trekking",
     img: "/assets/LandingHeroCarousel/bg3.webp",
+    description: "Guided multi-day treks across stunning Himalayan landscapes.",
+    buttonText: "Find Treks",
+    route: "/book-trek?type=Trekking",
   },
   {
     title: "Mountaineering",
     img: "/assets/LandingHeroCarousel/bg4.webp",
+    description:
+      "High-altitude expeditions for experienced climbers and summit seekers.",
+    buttonText: "Start Expedition",
+    route: "/book-trek?type=Mountaineering",
   },
 ];
 
 const TrekServices = () => {
   const [startIndex, setStartIndex] = useState(0);
   const [cardsPerView, setCardsPerView] = useState(3);
+
+  const navigate = useNavigate();
+
 
   // Responsive layout
   useEffect(() => {
@@ -98,8 +117,8 @@ const TrekServices = () => {
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
       >
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua.
+        Discover handcrafted outdoor adventures designed for explorers,
+        thrill-seekers, and nature lovers across the Himalayas.
       </motion.p>
 
       {/* Slider */}
@@ -138,11 +157,21 @@ const TrekServices = () => {
                   <h3 className="text-lg font-semibold text-white mb-2">
                     {service.title}
                   </h3>
-                  <p className="text-gray-200 text-sm mb-4">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  </p>
-                  <button className="px-4 py-2 bg-white text-gray-900 rounded-full font-medium hover:bg-[#68917C] hover:text-white transition">
-                    Enquire Now
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    whileHover={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="text-gray-200 text-sm mb-4"
+                  >
+                    {service.description}
+                  </motion.p>
+
+                  <button
+                    onClick={() => navigate(service.route)}
+                    className="px-4 py-2 bg-white text-gray-900 rounded-full font-medium
+             hover:bg-[#68917C] hover:text-white transition"
+                  >
+                    {service.buttonText}
                   </button>
                 </div>
               </motion.div>
