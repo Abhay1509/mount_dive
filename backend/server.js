@@ -7,7 +7,6 @@ dotenv.config();
 import authRoutes from "./routes/authRoutes.js";
 import trekRoutes from "./routes/trekRoutes.js";
 import trekRegistrationRoutes from "./routes/trekRegistrationRoutes.js";
-
 const app = express();
 
 // Middleware

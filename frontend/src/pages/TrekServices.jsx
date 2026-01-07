@@ -38,6 +38,43 @@ const TrekServices = () => {
 
   const totalSlides = Math.ceil(services.length / cardsPerView);
 
+  useEffect(() => {
+    const maxIndex = services.length - cardsPerView;
+    if (startIndex > maxIndex) {
+      setStartIndex(maxIndex);
+    }
+  }, [cardsPerView]);
+
+  const CARD_WIDTH = 320; // w-80
+  const GAP = 24; // gap-6 (Tailwind gap-6 = 24px)
+  const SLIDE_WIDTH = CARD_WIDTH + GAP;
+
+  //swipe handlers
+  const touchStartX = React.useRef(0);
+  const touchEndX = React.useRef(0);
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    const swipeDistance = touchStartX.current - touchEndX.current;
+    const threshold = 50; // minimum swipe distance
+
+    if (swipeDistance > threshold) {
+      // swipe left → next
+      setStartIndex((prev) =>
+        Math.min(prev + cardsPerView, services.length - cardsPerView)
+      );
+    } else if (swipeDistance < -threshold) {
+      // swipe right → previous
+      setStartIndex((prev) => Math.max(prev - cardsPerView, 0));
+    }
+  };
+
   return (
     <section
       id="trek-services"
@@ -67,12 +104,16 @@ const TrekServices = () => {
 
       {/* Slider */}
       <div className="relative max-w-7xl mx-auto">
-        <div className="overflow-hidden">
+        <div
+          className="overflow-hidden"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           <motion.div
             className="flex gap-6"
-            animate={{ x: `-${startIndex * (100 / cardsPerView)}%` }}
+            animate={{ x: -startIndex * SLIDE_WIDTH }}
             transition={{ duration: 0.6, ease: "easeInOut" }}
-            style={{ width: `${(services.length / cardsPerView) * 100}%` }}
           >
             {services.map((service, i) => (
               <motion.div
@@ -114,7 +155,7 @@ const TrekServices = () => {
           {Array.from({ length: totalSlides }).map((_, idx) => (
             <button
               key={idx}
-              onClick={() => setStartIndex(idx)}
+              onClick={() => setStartIndex(idx * cardsPerView)}
               className={`w-3 h-3 rounded-full transition ${
                 startIndex === idx ? "bg-[#8B7355] scale-125" : "bg-gray-300"
               }`}

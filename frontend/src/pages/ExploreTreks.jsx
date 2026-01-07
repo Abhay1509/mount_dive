@@ -19,13 +19,25 @@ const ExploreTreks = () => {
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/treks`
         );
-        setTreks(response.data);
+
+        // ✅ ALWAYS force treks to be an array
+        const data = Array.isArray(response.data)
+          ? response.data
+          : Array.isArray(response.data?.treks)
+          ? response.data.treks
+          : Array.isArray(response.data?.data)
+          ? response.data.data
+          : [];
+
+        setTreks(data);
       } catch (error) {
         console.error("Error fetching treks:", error);
+        setTreks([]); // never allow non-array
       } finally {
         setLoading(false);
       }
     };
+
     fetchTreks();
   }, []);
 

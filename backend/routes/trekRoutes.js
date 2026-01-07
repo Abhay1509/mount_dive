@@ -10,12 +10,14 @@ const router = express.Router();
 router.get("/", async (req, res) => {
   try {
     const treks = await Trek.find().sort({ createdAt: -1 });
+    console.log("📦 Backend treks count:", treks.length);
     res.status(200).json(treks);
   } catch (error) {
     console.error("❌ Error fetching treks:", error);
     res.status(500).json({ message: "Server Error" });
   }
 });
+
 
 /* ============================================================
    GET SINGLE TREK
@@ -42,9 +44,9 @@ router.get("/:id", async (req, res) => {
 ============================================================ */
 router.post("/", async (req, res) => {
   try {
-  //  console.log("📥 Incoming Trek Data:", req.body);  // Debug log
+    //  console.log("📥 Incoming Trek Data:", req.body);  // Debug log
 
-    const trek = new Trek(req.body);   // Let mongoose handle validation
+    const trek = new Trek(req.body); // Let mongoose handle validation
     const saved = await trek.save();
 
     res.status(201).json(saved);
@@ -57,7 +59,6 @@ router.post("/", async (req, res) => {
     });
   }
 });
-
 
 /* ============================================================
    UPDATE TREK
@@ -99,6 +100,8 @@ router.delete("/:id", async (req, res) => {
     console.error("❌ Error deleting trek:", error);
     res.status(500).json({ message: "Server Error" });
   }
+
+  
 });
 
 export default router;

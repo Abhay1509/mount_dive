@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Navbar from "./Navbar";
 import {
   ChevronDown,
   ChevronUp,
@@ -21,6 +22,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useParams } from "react-router-dom";
+import Footer from "./Footer";
 
 // const images = [
 //   "assets/LandingHeroCarousel/bg4.webp",
@@ -152,6 +154,37 @@ const BookNow = () => {
 
   const visibleThumbnails = images.slice(0, 4);
   const remainingCount = images.length - visibleThumbnails.length;
+
+  //tab order
+
+  const tabOrder = {
+    Itinerary: "01",
+    Highlights: "02",
+    Inclusions: "03",
+    Exclusions: "04",
+    "Add-ons": "05",
+  };
+
+  const InfoSection = ({ number, title, items }) => {
+    if (!items || items.length === 0) return null;
+
+    return (
+      <div className="bg-white p-6 rounded-b-md shadow-sm">
+        <h2 className="text-[#3B3B3B] font-semibold text-lg mb-4">
+          <span className="mr-2 text-[#8F6E56]">{number}.</span>
+          {title}
+        </h2>
+
+        <ul className="list-disc ml-6 space-y-3 text-sm text-gray-700">
+          {items.map((item, idx) => (
+            <li key={idx}>{item}</li>
+          ))}
+        </ul>
+      </div>
+    );
+  };
+  
+
   // if (!user) {
   //   return (
   //     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
@@ -169,224 +202,7 @@ const BookNow = () => {
   return (
     <>
       <div className="bg-[#F5F4F0]"></div>
-      <nav className="fixed top-0 left-0 w-full h-[65px] bg-white/80 backdrop-blur-md z-50 flex items-center justify-between px-4 sm:px-6 md:px-12 shadow-sm">
-        {/* Logo */}
-        <Link to="/">
-          <img
-            src="/SVG/logo1.svg"
-            alt="Logo"
-            className="h-[45px] w-auto object-contain"
-          />
-        </Link>
-
-        {/* Desktop Menu */}
-        <ul className="hidden md:flex gap-8 font-syne text-[15px] text-gray-700 font-light">
-          <li>
-            <Link
-              to="/landing"
-              className="hover:text-[rgba(104,145,124,1)] transition-colors"
-            >
-              Home
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/explore"
-              className="hover:text-[rgba(104,145,124,1)] transition-colors"
-            >
-              Explore
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/about"
-              className="hover:text-[rgba(104,145,124,1)] transition-colors"
-            >
-              About Us
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/gallery"
-              className="hover:text-[rgba(104,145,124,1)] transition-colors"
-            >
-              Gallery
-            </Link>
-          </li>
-        </ul>
-
-        {/* Desktop Auth/User Button */}
-        <div className="hidden md:flex">
-          {user ? (
-            <div className="relative">
-              <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="ml-4 px-6 py-2 rounded-full border border-[#8F6E56] text-[#3B3B3B] hover:bg-[#68917C] font-syne transition hover:text-white flex gap-3 items-center text-[14px]"
-              >
-                Hello {user.name}
-                <img src="/SVG/arrow-down.svg" alt="" />
-              </button>
-
-              {/* Desktop Dropdown */}
-              {isOpen && (
-                <div className="absolute right-0 mt-2 w-[200px] bg-white shadow-md rounded-md flex flex-col py-2 text-sm font-syne text-gray-700">
-                  <Link
-                    to="/profile"
-                    className="px-4 py-2 hover:bg-gray-100 flex gap-2 items-center"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <img src="/SVG/profile.svg" className="h-4 w-5" alt="" />
-                    Profile
-                  </Link>
-                  <Link
-                    to="/upcoming-treks"
-                    className="px-4 py-2 hover:bg-gray-100 flex gap-2 items-center"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <img src="/SVG/timer.svg" className="h-4 w-5" alt="" />
-                    Upcoming Treks
-                  </Link>
-                  <Link
-                    to="/previous-treks"
-                    className="px-4 py-2 hover:bg-gray-100 flex gap-2 items-center"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <img src="/SVG/timer.svg" className="h-4 w-5" alt="" />
-                    Previous Treks
-                  </Link>
-                  <button
-                    onClick={() => {
-                      setIsOpen(false);
-                      logout();
-                    }}
-                    className="px-4 py-2 hover:bg-gray-100 flex gap-2 items-center text-left"
-                  >
-                    <img src="/SVG/logout.svg" className="h-4 w-5" alt="" />
-                    Logout
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <button
-              onClick={() => navigate("/auth/signup")}
-              className="ml-4 px-6 py-2 rounded-full border border-[#8F6E56] text-[#3B3B3B] hover:bg-[#68917C] transition hover:text-white"
-            >
-              Sign Up
-            </button>
-          )}
-        </div>
-
-        {/* Mobile Menu Button */}
-        <button
-          className="md:hidden flex flex-col justify-center items-center w-8 h-8 focus:outline-none"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          <span
-            className={`block h-0.5 w-6 bg-gray-800 transition-all duration-300 ${
-              isOpen ? "rotate-45 translate-y-1.5" : ""
-            }`}
-          ></span>
-          <span
-            className={`block h-0.5 w-6 bg-gray-800 my-1 transition-all duration-300 ${
-              isOpen ? "opacity-0" : ""
-            }`}
-          ></span>
-          <span
-            className={`block h-0.5 w-6 bg-gray-800 transition-all duration-300 ${
-              isOpen ? "-rotate-45 -translate-y-1.5" : ""
-            }`}
-          ></span>
-        </button>
-
-        {/*  Mobile Dropdown with ALL Links */}
-        {isOpen && (
-          <div className="absolute top-[65px] left-0 w-full bg-white shadow-md md:hidden flex flex-col items-center py-4 space-y-4 font-syne text-gray-700 text-sm">
-            {/* Navigation Links */}
-            <Link
-              to="/landing"
-              className="hover:text-[rgba(104,145,124,1)]"
-              onClick={() => setIsOpen(false)}
-            >
-              Home
-            </Link>
-            <Link
-              to="/explore"
-              className="hover:text-[rgba(104,145,124,1)]"
-              onClick={() => setIsOpen(false)}
-            >
-              Explore
-            </Link>
-            <Link
-              to="/about"
-              className="hover:text-[rgba(104,145,124,1)]"
-              onClick={() => setIsOpen(false)}
-            >
-              About Us
-            </Link>
-            <Link
-              to="/gallery"
-              className="hover:text-[rgba(104,145,124,1)]"
-              onClick={() => setIsOpen(false)}
-            >
-              Gallery
-            </Link>
-
-            {/* Divider */}
-            <div className="w-3/4 border-t border-gray-200 my-2"></div>
-
-            {/* User or Auth Links */}
-            {user ? (
-              <>
-                <Link
-                  to="/profile"
-                  className="hover:text-[rgba(104,145,124,1)] flex gap-2 items-center"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <img src="/SVG/profile.svg" className="h-4 w-5" alt="" />
-                  Profile
-                </Link>
-                <Link
-                  to="/upcoming-treks"
-                  className="hover:text-[rgba(104,145,124,1)] flex gap-2 items-center"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <img src="/SVG/timer.svg" className="h-4 w-5" alt="" />
-                  Upcoming Treks
-                </Link>
-                <Link
-                  to="/previous-treks"
-                  className="hover:text-[rgba(104,145,124,1)] flex gap-2 items-center"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <img src="/SVG/timer.svg" className="h-4 w-5" alt="" />
-                  Previous Treks
-                </Link>
-                <button
-                  onClick={() => {
-                    setIsOpen(false);
-                    logout();
-                  }}
-                  className="hover:text-[rgba(104,145,124,1)] flex gap-2 items-center"
-                >
-                  <img src="/SVG/logout.svg" className="h-4 w-5" alt="" />
-                  Logout
-                </button>
-              </>
-            ) : (
-              <button
-                onClick={() => {
-                  setIsOpen(false);
-                  navigate("/auth/signup");
-                }}
-                className="px-4 py-2 border border-[#8F6E56] text-[#3B3B3B] rounded-md hover:bg-[#68917C] hover:text-white"
-              >
-                Sign Up
-              </button>
-            )}
-          </div>
-        )}
-      </nav>
+      <Navbar/>
 
       <div className="main flex flex-col xl:flex-row gap-4 justify-center px-4 md:px-6 xl:px-8 pt-[90px]">
         {/* LEFT COLUMN (content) */}
@@ -397,6 +213,7 @@ const BookNow = () => {
               <img
                 src={images[selectedIndex]}
                 alt="Main Slide"
+                loading="lazy"
                 className="w-full h-full object-cover cursor-pointer transition-transform duration-300 hover:scale-105"
                 onClick={() => setLightboxOpen(true)}
               />
@@ -545,26 +362,29 @@ const BookNow = () => {
           <div className="h-[600px] w-full bg-[#E5E3DC4D]  border-dashed border-[#D8D5CA] rounded-lg mt-6 border-2"></div>
 
           {/* STATS BLOCKS */}
-          <div className="flex flex-wrap mt-6 gap-3">
-            <div className="w-full sm:w-[48%] md:w-[223px] h-[100px] bg-[#E5E3DC] rounded-lg flex flex-col justify-center items-center gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 mt-6">
+            <div className="h-[100px] bg-[#E5E3DC] rounded-lg flex flex-col justify-center items-center gap-2">
               <h3 className="text-[#666666] text-sm">Duration</h3>
               <p className="text-[#3B3B3B] text-xl font-syne">
                 {trek?.duration}
               </p>
             </div>
-            <div className="w-full sm:w-[48%] md:w-[223px] h-[100px] bg-[#E5E3DC] rounded-lg flex flex-col justify-center items-center gap-2">
+
+            <div className="h-[100px] bg-[#E5E3DC] rounded-lg flex flex-col justify-center items-center gap-2">
               <h3 className="text-[#666666] text-sm">Difficulty</h3>
               <p className="text-[#3B3B3B] text-xl font-syne">
                 {trek?.difficulty}
               </p>
             </div>
-            <div className="w-full sm:w-[48%] md:w-[223px] h-[100px] bg-[#E5E3DC] rounded-lg flex flex-col justify-center items-center gap-2">
+
+            <div className="h-[100px] bg-[#E5E3DC] rounded-lg flex flex-col justify-center items-center gap-2">
               <h3 className="text-[#666666] text-sm">Altitude</h3>
               <p className="text-[#3B3B3B] text-xl font-syne">
                 {trek?.altitude}
               </p>
             </div>
-            <div className="w-full sm:w-[48%] md:w-[223px] h-[100px] bg-[#E5E3DC] rounded-lg flex flex-col justify-center items-center gap-2">
+
+            <div className="h-[100px] bg-[#E5E3DC] rounded-lg flex flex-col justify-center items-center gap-2">
               <h3 className="text-[#666666] text-sm">Best Season</h3>
               <p className="text-[#3B3B3B] text-xl font-syne">
                 {trek?.bestSeason}
@@ -632,6 +452,40 @@ const BookNow = () => {
                   </div>
                 ))}
               </div>
+            )}
+            {activeTab === "Highlights" && (
+              <InfoSection
+                number={tabOrder.Highlights}
+                title="Highlights"
+                items={trek?.highlights}
+
+              />
+            )}
+
+            {activeTab === "Inclusions" && (
+              <InfoSection
+                number={tabOrder.Inclusions}
+                title="Inclusions"
+              items={trek?.inclusions}
+
+              />
+            )}
+
+            {activeTab === "Exclusions" && (
+              <InfoSection
+                number={tabOrder.Exclusions}
+                title="Exclusions"
+                items={trek?.exclusions}
+
+              />
+            )}
+
+            {activeTab === "Add-ons" && (
+              <InfoSection
+                number={tabOrder["Add-ons"]}
+                title="Add-ons"
+                items={trek?.addons}
+              />
             )}
           </div>
 
@@ -897,16 +751,7 @@ const BookNow = () => {
         )}
       </div>
 
-      <footer className="bg-[#3B3B3B] mt-16 text-[#F5F4F0] py-10 flex flex-col items-center space-y-4">
-        <div className="flex gap-5">
-          <img src="/SVG/instaabout.svg" className="h-5 w-5" alt="Instagram" />
-          <img src="/SVG/faceabout.svg" className="h-5 w-5" alt="Facebook" />
-          <img src="/SVG/xabout.svg" className="h-5 w-5" alt="X" />
-        </div>
-        <p className="text-xs md:text-sm opacity-80 text-center">
-          © 2025 MountTreks. Experience the Himalayas like never before.
-        </p>
-      </footer>
+      <Footer />
     </>
   );
 };

@@ -117,7 +117,7 @@ const LandingPageFooter = () => {
               className="flex-1 px-4 py-2 text-sm bg-white text-gray-800 focus:outline-none"
             />
 
-            <button className="bg-[#8B7355] text-white text-sm py-2 pl-4 pr-6 whitespace-nowrap hover:bg-[#6f5c45] transition flex items-center justify-center min-w-[90px]">
+            <button className="bg-[#8B7355] text-white text-sm py-2 pl-2 pr-6 whitespace-nowrap hover:bg-[#6f5c45] transition flex justify-center items-center min-w-[90px]">
               Sign In
             </button>
           </div>
@@ -127,12 +127,12 @@ const LandingPageFooter = () => {
       {/* Bottom Strip */}
       <div className="border-t border-gray-700 pt-6 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
         <p>© {new Date().getFullYear()} MountDive. All Rights Reserved</p>
-        <div className="flex gap-4 mt-4 md:mt-0">
-          <img src="/SVG/visa.png" alt="Visa" className="h-6" />
-          <img src="/mastercard.png" alt="MasterCard" className="h-6" />
-          <img src="/paypal.png" alt="PayPal" className="h-6" />
-          <img src="/applepay.png" alt="ApplePay" className="h-6" />
-        </div>
+        {/* <div className="flex gap-4 mt-4 md:mt-0">
+          <img src="/SVG/visa.svg" alt="Visa" className="h-6" />
+          <img src="/SVG/mastercard.svg" alt="MasterCard" className="h-6" />
+          <img src="/SVG/paypal.svg" alt="PayPal" className="h-6" />
+          <img src="/SVG/applepay.svg" alt="ApplePay" className="h-6" />
+        </div> */}
       </div>
     </footer>
   );

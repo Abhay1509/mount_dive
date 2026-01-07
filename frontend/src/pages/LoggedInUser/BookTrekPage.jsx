@@ -11,6 +11,8 @@ import { useNavigate } from "react-router-dom";
 import Card from "./LoggedInComponents/Card";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import FilterPanel from "./FilterPanel";
+import Navbar from "./Navbar";
 import axios from "axios";
 
 const slides = [
@@ -82,6 +84,39 @@ const slides = [
   },
 ];
 
+// const HARD_CODED_TREKS = [
+//   {
+//     _id: "1",
+//     title: "Bhrigu Lake Trek",
+//     type: "Mountain",
+//     location: "Manali",
+//     price: 12000,
+//     duration: "3 Days",
+//     images: ["/assets/LandingHeroCarousel/bg1.webp"],
+//     description: "A beautiful alpine lake trek",
+//   },
+//   {
+//     _id: "2",
+//     title: "Kedarkantha Trek",
+//     type: "Snow",
+//     location: "Uttarakhand",
+//     price: 9500,
+//     duration: "4 Days",
+//     images: ["/assets/LandingHeroCarousel/bg2.webp"],
+//     description: "Perfect winter trek for beginners",
+//   },
+//   {
+//     _id: "3",
+//     title: "Hampta Pass Trek",
+//     type: "Mountain",
+//     location: "Manali",
+//     price: 15000,
+//     duration: "5 Days",
+//     images: ["/assets/LandingHeroCarousel/bg3.webp"],
+//     description: "High altitude crossover trek",
+//   },
+// ];
+
 const BookTrekPage = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -91,7 +126,6 @@ const BookTrekPage = () => {
   const [treks, setTreks] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const cards = useMemo(() => treks, [treks]);
   const deferredType = useDeferredValue(selectedType);
   const deferredMaxPrice = useDeferredValue(maxPrice);
   const [isOpen, setIsOpen] = useState(false);
@@ -104,15 +138,34 @@ const BookTrekPage = () => {
   const [selectedLocation, setSelectedLocation] = useState("All");
   const [sortByPrice, setSortByPrice] = useState("none"); // "none" | "low" | "high"
 
+  // useEffect(() => {
+  //   setTreks(HARD_CODED_TREKS);
+  //   setLoading(false);
+  // }, []);
+
   useEffect(() => {
+    console.log("🟡 useEffect triggered");
     const fetchTreks = async () => {
+      console.log("🚀 Calling GET /api/treks");
       try {
-        const res = await axios.get(
+        const response = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/treks`
         );
-        setTreks(res.data);
-      } catch (err) {
-        console.error("Error fetching treks:", err);
+
+        // ALWAYS force treks to be an array
+        const data = Array.isArray(response.data)
+          ? response.data
+          : Array.isArray(response.data?.treks)
+          ? response.data.treks
+          : Array.isArray(response.data?.data)
+          ? response.data.data
+          : [];
+
+        setTreks(data);
+        console.log("✅ Treks fetched:", data);
+      } catch (error) {
+        console.error("Error fetching treks:", error);
+        setTreks([]); // never allow non-array
       } finally {
         setLoading(false);
       }
@@ -122,65 +175,42 @@ const BookTrekPage = () => {
   }, []);
 
   const filteredCards = useMemo(() => {
-    // convert date strings to timestamps once
+    if (!Array.isArray(treks)) return [];
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayTs = today.getTime();
+
     const fromTs = dateFrom ? new Date(dateFrom).getTime() : null;
     const toTs = dateTo ? new Date(dateTo).getTime() : null;
 
-    let result = cards.filter((card) => {
-      // type filter
+    let result = treks.filter((card) => {
       const matchesType =
-        deferredType === "All" || !deferredType
-          ? true
-          : (card.type || "").toLowerCase() === deferredType.toLowerCase();
+        !deferredType ||
+        deferredType === "All" ||
+        (card.type || "").toLowerCase() === deferredType.toLowerCase();
 
-      // location filter
       const matchesLocation =
-        selectedLocation === "All" || !selectedLocation
-          ? true
-          : (card.location || "").toLowerCase() ===
-            selectedLocation.toLowerCase();
+        selectedLocation === "All" ||
+        (card.location || "").toLowerCase() === selectedLocation.toLowerCase();
 
-      // price range filter
-      const price = Number(card.price) || 0;
+      const price = Number(card.price);
       const matchesPrice =
-        price >= Number(minPriceFilter) && price <= Number(maxPriceFilter);
+        !isNaN(price) && price >= minPriceFilter && price <= maxPriceFilter;
 
-      // date filter: only if card provides date range or a startDate - otherwise pass through
       let matchesDate = true;
-      // Example: if your trek documents include startDate/endDate as ISO strings:
-      // card.startDate, card.endDate
-      if (fromTs || toTs) {
-        if (card.startDate || card.endDate) {
-          const cardStart = card.startDate
-            ? new Date(card.startDate).getTime()
-            : null;
-          const cardEnd = card.endDate
-            ? new Date(card.endDate).getTime()
-            : null;
-          // overlap logic: wants at least one day inside selected range
-          if (fromTs && toTs) {
-            // must overlap
-            matchesDate =
-              (cardStart &&
-                cardEnd &&
-                cardEnd >= fromTs &&
-                cardStart <= toTs) ||
-              (cardStart &&
-                !cardEnd &&
-                cardStart >= fromTs &&
-                cardStart <= toTs);
-          } else if (fromTs) {
-            matchesDate = cardEnd
-              ? cardEnd >= fromTs
-              : cardStart
-              ? cardStart >= fromTs
-              : true;
-          } else if (toTs) {
-            matchesDate = cardStart ? cardStart <= toTs : true;
-          }
-        } else {
-          // if trek has no date info, treat it as matching (so you can still see those treks)
-          matchesDate = true;
+      if ((fromTs || toTs) && card.startDate) {
+        const cardStart = new Date(card.startDate).getTime();
+        const cardEnd = card.endDate
+          ? new Date(card.endDate).getTime()
+          : cardStart;
+
+        if (fromTs && toTs) {
+          matchesDate = cardEnd >= fromTs && cardStart <= toTs;
+        } else if (fromTs) {
+          matchesDate = cardEnd >= fromTs;
+        } else if (toTs) {
+          matchesDate = cardStart <= toTs;
         }
       }
 
@@ -196,7 +226,7 @@ const BookTrekPage = () => {
 
     return result;
   }, [
-    cards,
+    treks,
     deferredType,
     deferredMaxPrice, // keep for UI but main price filters are minPriceFilter/maxPriceFilter
     dateFrom,
@@ -208,14 +238,18 @@ const BookTrekPage = () => {
   ]);
 
   const trekTypes = useMemo(
-    () => ["All", ...new Set(cards.map((c) => c.type || "Other"))],
-    [cards]
+    () => ["All", ...new Set(treks.map((c) => c.type || "Other"))],
+    [treks]
   );
 
   const locations = useMemo(
-    () => ["All", ...new Set(cards.map((c) => c.location || "Unknown"))],
-    [cards]
+    () => ["All", ...new Set(treks.map((c) => c.location || "Unknown"))],
+    [treks]
   );
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const todayStr = today.toISOString().split("T")[0];
 
   const listRef = useRef(null);
   const carouselRef = useRef(null);
@@ -227,10 +261,16 @@ const BookTrekPage = () => {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
 
   const showSlider = (type) => {
+    if (!listRef.current || !carouselRef.current) return;
+
     requestAnimationFrame(() => {
       const list = listRef.current;
       const carousel = carouselRef.current;
+
+      if (!list) return;
+
       const items = list.querySelectorAll(".item");
+      if (!items || items.length === 0) return;
 
       if (type === "next") {
         list.appendChild(items[0]);
@@ -251,16 +291,8 @@ const BookTrekPage = () => {
         carousel.classList.remove("next");
         carousel.classList.remove("prev");
       }, timeRunning);
-
-      clearTimeout(autoNextRef.current);
-      autoNextRef.current = setTimeout(() => {
-        showSlider("next");
-      }, timeAutoNext);
-
-      resetTimeAnimation();
     });
   };
-  
 
   const resetTimeAnimation = () => {
     const bar = runningTimeRef.current;
@@ -295,6 +327,12 @@ const BookTrekPage = () => {
     };
   }, []);
 
+  //Mobile Filter
+  const [showFiltersPopup, setShowFiltersPopup] = useState(false);
+  useEffect(() => {
+    document.body.style.overflow = showFiltersPopup ? "hidden" : "";
+  }, [showFiltersPopup]);
+
   // //  Guest protection
   // if (!user) {
   //   return (
@@ -316,235 +354,12 @@ const BookTrekPage = () => {
     <>
       <div className="relative w-screen h-screen overflow-hidden bg-black text-white font-[Poppins]">
         {/* Header */}
-        <header className="absolute top-0 left-0 w-full flex items-center h-12 px-24 z-[1000]">
-          <nav className="fixed top-0 left-0 w-full h-[65px] bg-white/80 backdrop-blur-md z-50 flex items-center justify-between px-4 sm:px-6 md:px-12 shadow-sm">
-            {/* Logo */}
-            <Link to="/">
-              <img
-                src="/SVG/logo1.svg"
-                alt="Logo"
-                className="h-[45px] w-auto object-contain"
-              />
-            </Link>
-
-            {/* Desktop Menu */}
-            <ul className="hidden md:flex gap-8 font-syne text-[15px] text-gray-700 font-light">
-              <li>
-                <Link
-                  to="/landing"
-                  className="hover:text-[rgba(104,145,124,1)] transition-colors"
-                >
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/explore"
-                  className="hover:text-[rgba(104,145,124,1)] transition-colors"
-                >
-                  Explore
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/about"
-                  className="hover:text-[rgba(104,145,124,1)] transition-colors"
-                >
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/gallery"
-                  className="hover:text-[rgba(104,145,124,1)] transition-colors"
-                >
-                  Gallery
-                </Link>
-              </li>
-            </ul>
-
-            {/* Desktop Auth/User Button */}
-            <div className="hidden md:flex">
-              {user ? (
-                <div className="relative">
-                  <button
-                    onClick={() => setIsOpen(!isOpen)}
-                    className="ml-4 px-6 py-2 rounded-full border border-[#8F6E56] text-[#3B3B3B] hover:bg-[#68917C] font-syne transition hover:text-white flex gap-3 items-center text-[14px]"
-                  >
-                    Hello {user.name}
-                    <img src="/SVG/arrow-down.svg" alt="" />
-                  </button>
-
-                  {/* Desktop Dropdown */}
-                  {isOpen && (
-                    <div className="absolute right-0 mt-2 w-[200px] bg-white shadow-md rounded-md flex flex-col py-2 text-sm font-syne text-gray-700">
-                      <Link
-                        to="/profile"
-                        className="px-4 py-2 hover:bg-gray-100 flex gap-2 items-center"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        <img
-                          src="/SVG/profile.svg"
-                          className="h-4 w-5"
-                          alt=""
-                        />
-                        Profile
-                      </Link>
-                      <Link
-                        to="/upcoming-treks"
-                        className="px-4 py-2 hover:bg-gray-100 flex gap-2 items-center"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        <img src="/SVG/timer.svg" className="h-4 w-5" alt="" />
-                        Upcoming Treks
-                      </Link>
-                      <Link
-                        to="/previous-treks"
-                        className="px-4 py-2 hover:bg-gray-100 flex gap-2 items-center"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        <img src="/SVG/timer.svg" className="h-4 w-5" alt="" />
-                        Previous Treks
-                      </Link>
-                      <button
-                        onClick={() => {
-                          setIsOpen(false);
-                          logout();
-                        }}
-                        className="px-4 py-2 hover:bg-gray-100 flex gap-2 items-center text-left"
-                      >
-                        <img src="/SVG/logout.svg" className="h-4 w-5" alt="" />
-                        Logout
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <button
-                  onClick={() => navigate("/auth/signup")}
-                  className="ml-4 px-6 py-2 rounded-full border border-[#8F6E56] text-[#3B3B3B] hover:bg-[#68917C] transition hover:text-white"
-                >
-                  Sign Up
-                </button>
-              )}
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              className="md:hidden flex flex-col justify-center items-center w-8 h-8 focus:outline-none"
-              onClick={() => setIsOpen(!isOpen)}
-            >
-              <span
-                className={`block h-0.5 w-6 bg-gray-800 transition-all duration-300 ${
-                  isOpen ? "rotate-45 translate-y-1.5" : ""
-                }`}
-              ></span>
-              <span
-                className={`block h-0.5 w-6 bg-gray-800 my-1 transition-all duration-300 ${
-                  isOpen ? "opacity-0" : ""
-                }`}
-              ></span>
-              <span
-                className={`block h-0.5 w-6 bg-gray-800 transition-all duration-300 ${
-                  isOpen ? "-rotate-45 -translate-y-1.5" : ""
-                }`}
-              ></span>
-            </button>
-
-            {/*  Mobile Dropdown with ALL Links */}
-            {isOpen && (
-              <div className="absolute top-[65px] left-0 w-full bg-white shadow-md md:hidden flex flex-col items-center py-4 space-y-4 font-syne text-gray-700 text-sm">
-                {/* Navigation Links */}
-                <Link
-                  to="/landing"
-                  className="hover:text-[rgba(104,145,124,1)]"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Home
-                </Link>
-                <Link
-                  to="/book-trek"
-                  className="hover:text-[rgba(104,145,124,1)]"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Explore
-                </Link>
-                <Link
-                  to="/about"
-                  className="hover:text-[rgba(104,145,124,1)]"
-                  onClick={() => setIsOpen(false)}
-                >
-                  About Us
-                </Link>
-                <Link
-                  to="/gallery"
-                  className="hover:text-[rgba(104,145,124,1)]"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Gallery
-                </Link>
-
-                {/* Divider */}
-                <div className="w-3/4 border-t border-gray-200 my-2"></div>
-
-                {/* User or Auth Links */}
-                {user ? (
-                  <>
-                    <Link
-                      to="/profile"
-                      className="hover:text-[rgba(104,145,124,1)] flex gap-2 items-center"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      <img src="/SVG/profile.svg" className="h-4 w-5" alt="" />
-                      Profile
-                    </Link>
-                    <Link
-                      to="/upcoming-treks"
-                      className="hover:text-[rgba(104,145,124,1)] flex gap-2 items-center"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      <img src="/SVG/timer.svg" className="h-4 w-5" alt="" />
-                      Upcoming Treks
-                    </Link>
-                    <Link
-                      to="/previous-treks"
-                      className="hover:text-[rgba(104,145,124,1)] flex gap-2 items-center"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      <img src="/SVG/timer.svg" className="h-4 w-5" alt="" />
-                      Previous Treks
-                    </Link>
-                    <button
-                      onClick={() => {
-                        setIsOpen(false);
-                        logout();
-                      }}
-                      className="hover:text-[rgba(104,145,124,1)] flex gap-2 items-center"
-                    >
-                      <img src="/SVG/logout.svg" className="h-4 w-5" alt="" />
-                      Logout
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    onClick={() => {
-                      setIsOpen(false);
-                      navigate("/auth/signup");
-                    }}
-                    className="px-4 py-2 border border-[#8F6E56] text-[#3B3B3B] rounded-md hover:bg-[#68917C] hover:text-white"
-                  >
-                    Sign Up
-                  </button>
-                )}
-              </div>
-            )}
-          </nav>
-        </header>
+        <Navbar/>
 
         {/* Carousel */}
         <div
           ref={carouselRef}
-          className="carousel w-full h-full relative overflow-hidden"
+          className="carousel w-screen h-screen relative overflow-hidden"
         >
           <div ref={listRef} className="list relative w-full h-full">
             {slides.map((slide, i) => (
@@ -557,13 +372,13 @@ const BookTrekPage = () => {
           </div>
 
           {/* Fixed content (stays in one place) */}
-          <div className="fixed-content absolute top-1/2 -translate-y-1/2 text-left text-white left-4 sm:left-8 md:left-[100px] w-[90%] sm:w-[70%] md:w-[400px] z-[200] pointer-events-auto">
+          <div className="fixed-content absolute top-1/2 -translate-y-1/2 text-left text-white left-8 md:left-[100px] w-[70%] md:w-[400px] z-[200] pointer-events-auto">
             <motion.div
               key={`title-${currentSlideIndex}`}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3, duration: 1, ease: "easeInOut" }}
-              className="font-bold uppercase leading-none text-[32px] sm:text-[44px] md:text-[60px] lg:text-[100px]"
+              className="font-bold uppercase leading-none text-[44px] md:text-[60px] lg:text-[100px]"
             >
               {slides[currentSlideIndex]?.title}
             </motion.div>
@@ -573,7 +388,7 @@ const BookTrekPage = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4, duration: 1, ease: "easeInOut" }}
-              className="font-bold uppercase text-white drop-shadow-md leading-none mt-0 text-[32px] sm:text-[44px] md:text-[60px] lg:text-[100px]"
+              className="font-bold uppercase text-white drop-shadow-md leading-none mt-0 text-[44px] md:text-[60px] lg:text-[100px]"
             >
               {slides[currentSlideIndex]?.name}
             </motion.div>
@@ -583,7 +398,7 @@ const BookTrekPage = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5, duration: 1, ease: "easeInOut" }}
-              className="mt-2 mb-4 text-base sm:text-lg text-gray-200 max-w-full md:max-w-md"
+              className="mt-2 mb-4 text-lg text-gray-200 max-w-full md:max-w-md"
             >
               {slides[currentSlideIndex]?.desc}
             </motion.p>
@@ -595,13 +410,13 @@ const BookTrekPage = () => {
               transition={{ delay: 0.6, duration: 1, ease: "easeInOut" }}
               className="flex items-center space-x-4"
             >
-              <button className="h-[35px] w-[35px] bg-orange-400 text-black font-semibold border-2 rounded-full border-white hover:bg-[rgba(104,145,124,1)] flex justify-center items-center hover:text-white transition-all">
+              {/* <button className="h-[35px] w-[35px] bg-orange-400 text-black font-semibold border-2 rounded-full border-white hover:bg-[rgba(104,145,124,1)] flex justify-center items-center hover:text-white transition-all">
                 <img
                   src="/SVG/bookmark.svg"
                   className="h-[20px] w-[20px]"
                   alt=""
                 />
-              </button>
+              </button> */}
               <button className="h-[35px] min-w-[110px] bg-transparent border border-white/80 text-white font-syne font-medium text-sm px-4 py-1 hover:bg-[rgba(104,145,124,1)] rounded-full hover:text-white transition-all">
                 Know More
               </button>
@@ -648,20 +463,7 @@ const BookTrekPage = () => {
             .carousel.prev .list .item:nth-child(1) { transition: 1s; }
             .carousel .list .item:nth-child(2) .content { display: block !important; }
 
-            @media (max-width: 640px) {
-              .carousel .list .item:nth-child(3),
-              .carousel .list .item:nth-child(4),
-              .carousel .list .item:nth-child(5),
-              .carousel .list .item:nth-child(6) {
-                position: relative;
-                top: auto; left: auto; bottom: 8px;
-                width: 120px; height: 160px; transform: none;
-                margin-right: 8px; display: inline-block; opacity: 0.95; 
-              }
-              .carousel .list { display: flex; align-items: flex-end; gap: 8px; padding-bottom: 140px; }
-              .carousel .list .item:nth-child(1), .carousel .list .item:nth-child(2) { height: 100%; border-radius: 0; }
-              .carousel .fixed-content { left: 12px !important; width: calc(100% - 24px) !important; top: 45% !important; transform: translateY(-40%) !important; }
-            }
+        
 
             @media (min-width: 641px) and (max-width: 1024px) {
               .carousel .list .item:nth-child(3),
@@ -697,177 +499,60 @@ const BookTrekPage = () => {
         <div className="w-full max-w-7xl mx-auto flex flex-col lg:flex-row gap-14 mb-20 pt-10">
           {/* --------- FILTER PANEL (replace existing left panel) --------- */}
           <div className="hidden lg:block lg:w-[230px]">
-            <div className="sticky top-[100px] bg-white border border-gray-200 rounded-xl p-4 shadow-sm font-syne text-[#3B3B3B] h-fit">
-              <h2 className="text-lg font-semibold mb-4">Filters</h2>
-
-              {/* Date Range (pop-over using native inputs) */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">
-                  Date Range
-                </label>
-                <div className="relative">
-                  <button
-                    onClick={() => {}}
-                    className="w-full flex items-center justify-between border border-gray-300 rounded-md px-3 py-2 text-sm hover:border-[#8F6E56] transition"
-                  >
-                    <span className="text-gray-700">
-                      {dateFrom || dateTo
-                        ? `${dateFrom || "Start"} → ${dateTo || "End"}`
-                        : "Select Dates"}
-                    </span>
-                    <img src="/SVG/calendar.svg" alt="" className="w-4 h-4" />
-                  </button>
-
-                  {/* Inline small date inputs (always visible on desktop for simplicity) */}
-                  <div className="flex gap-2 mt-3">
-                    <input
-                      type="date"
-                      value={dateFrom}
-                      onChange={(e) => setDateFrom(e.target.value)}
-                      className="w-1/2 border border-gray-300 rounded-md px-2 py-1 text-sm"
-                    />
-                    <input
-                      type="date"
-                      value={dateTo}
-                      onChange={(e) => setDateTo(e.target.value)}
-                      className="w-1/2 border border-gray-300 rounded-md px-2 py-1 text-sm"
-                    />
-                  </div>
-                  <div className="flex gap-2 mt-2 text-xs text-gray-500">
-                    <button
-                      onClick={() => {
-                        setDateFrom("");
-                        setDateTo("");
-                      }}
-                      className="underline"
-                    >
-                      Clear
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Budget Range */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">
-                  Budget Range
-                </label>
-
-                <div className="px-1">
-                  {/* slider for max; keep two number boxes for precise min/max */}
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="range"
-                      min="1000"
-                      max="50000"
-                      step="500"
-                      value={minPriceFilter}
-                      onChange={(e) => {
-                        const v = Number(e.target.value);
-                        // keep min <= max
-                        setMinPriceFilter(Math.min(v, maxPriceFilter));
-                      }}
-                      className="flex-1 accent-[#8F6E56] cursor-pointer"
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between gap-2 mt-2">
-                    <div className="flex-1">
-                      <label className="text-xs text-gray-500">Min</label>
-                      <input
-                        type="number"
-                        value={minPriceFilter}
-                        onChange={(e) => {
-                          const v = Number(e.target.value || 0);
-                          setMinPriceFilter(
-                            Math.max(0, Math.min(v, maxPriceFilter))
-                          );
-                        }}
-                        className="w-full border border-gray-200 rounded-md px-2 py-1 text-sm"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <label className="text-xs text-gray-500">Max</label>
-                      <input
-                        type="number"
-                        value={maxPriceFilter}
-                        onChange={(e) => {
-                          const v = Number(e.target.value || 0);
-                          setMaxPriceFilter(Math.max(v, minPriceFilter));
-                        }}
-                        className="w-full border border-gray-200 rounded-md px-2 py-1 text-sm"
-                      />
-                    </div>
-                  </div>
-                  <div className="flex justify-between text-xs mt-1 text-gray-600">
-                    <span>Min ₹1,000</span>
-                    <span>Max ₹50,000</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Sort by Location */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">
-                  Sort by Location
-                </label>
-                <select
-                  value={selectedLocation}
-                  onChange={(e) => setSelectedLocation(e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[#8F6E56]"
-                >
-                  {locations.map((loc, idx) => (
-                    <option key={idx} value={loc}>
-                      {loc}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Sort by Price */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">
-                  Sort by Price
-                </label>
-                <select
-                  value={sortByPrice}
-                  onChange={(e) => setSortByPrice(e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[#8F6E56]"
-                >
-                  <option value="none">None</option>
-                  <option value="low">Low to High</option>
-                  <option value="high">High to Low</option>
-                </select>
-              </div>
-
-              <div className="flex gap-2 mt-3">
-                <button
-                  onClick={() => {}}
-                  className="flex-1 w-full bg-[#8F6E56] hover:bg-[#73543F] text-white font-medium py-2 rounded-md transition"
-                >
-                  Apply Filters
-                </button>
-                <button
-                  onClick={() => {
-                    // reset all filters
-                    setDateFrom("");
-                    setDateTo("");
-                    setMinPriceFilter(1000);
-                    setMaxPriceFilter(50000);
-                    setSelectedLocation("All");
-                    setSelectedType("All");
-                    setSortByPrice("none");
-                  }}
-                  className="px-3 py-2 border border-gray-300 rounded-md text-sm"
-                >
-                  Reset
-                </button>
-              </div>
+            <div className="sticky top-[100px] ">
+              <FilterPanel
+                dateFrom={dateFrom}
+                dateTo={dateTo}
+                todayStr={todayStr}
+                setDateFrom={setDateFrom}
+                setDateTo={setDateTo}
+                minPriceFilter={minPriceFilter}
+                maxPriceFilter={maxPriceFilter}
+                setMinPriceFilter={setMinPriceFilter}
+                setMaxPriceFilter={setMaxPriceFilter}
+                selectedLocation={selectedLocation}
+                setSelectedLocation={setSelectedLocation}
+                sortByPrice={sortByPrice}
+                setSortByPrice={setSortByPrice}
+                locations={locations}
+                setSelectedType={setSelectedType}
+              />
             </div>
           </div>
-
-          <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-16 items-stretch mr-5">
-            {/* Replace the existing block with this */}
+          {/* FLOATING FILTER BUTTON (MOBILE/TABLET) */}
+          <button
+            onClick={() => setShowFiltersPopup(true)}
+            className="lg:hidden fixed bottom-5 right-5 z-40 
+             w-12 h-12 rounded-full bg-[#8F6E56] 
+             shadow-lg flex items-center justify-center"
+          >
+            <img src="/SVG/filter.svg" alt="Filters" className="w-5 h-5" />
+          </button>
+          {showFiltersPopup && (
+            <div className="lg:hidden fixed inset-0 z-50 bg-black/40">
+              <div className="absolute bottom-5 right-5 w-[90vw] max-w-[360px]">
+                <FilterPanel
+                  dateFrom={dateFrom}
+                  dateTo={dateTo}
+                  todayStr={todayStr}
+                  setDateFrom={setDateFrom}
+                  setDateTo={setDateTo}
+                  minPriceFilter={minPriceFilter}
+                  maxPriceFilter={maxPriceFilter}
+                  setMinPriceFilter={setMinPriceFilter}
+                  setMaxPriceFilter={setMaxPriceFilter}
+                  selectedLocation={selectedLocation}
+                  setSelectedLocation={setSelectedLocation}
+                  sortByPrice={sortByPrice}
+                  setSortByPrice={setSortByPrice}
+                  locations={locations}
+                  setSelectedType={setSelectedType}
+                  onClose={() => setShowFiltersPopup(false)}
+                />
+              </div>
+            </div>
+          )}
+          <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-16 items-stretch justify-items-center mr-5">
             {filteredCards.length > 0 ? (
               filteredCards.map((card, idx) => (
                 <Card
@@ -875,7 +560,12 @@ const BookTrekPage = () => {
                   id={card._id}
                   title={card.title}
                   price={card.price}
-                  time={card.duration}
+                  time={
+                    card.duration ||
+                    (card.durationDays && card.durationNights
+                      ? `${card.durationDays} Days / ${card.durationNights} Nights`
+                      : "")
+                  }
                   image={card.images?.[0]}
                   description={card.description}
                 />

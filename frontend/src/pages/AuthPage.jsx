@@ -75,20 +75,27 @@ const AuthPage = () => {
       </div>
 
       {/* Logo */}
-      <div className="m-0 p-0 absolute top-6 right-0 flex items-center mb-5 z-50">
-        <img
-          src="/SVG/logo1.svg"
-          alt="Mount Dive"
-          className="w-48 sm:w-60 md:w-64 h-auto mb-2"
-        />
-        <img src="/SVG/birds.svg" alt="" />
-      </div>
       {/* Auth panel */}
       <div
         className="w-[480px] md:w-1/3 h-[1024px] bg-white shadow-lg relative z-20
                       md:fixed md:top-0 md:right-0 md:h-full md:overflow-auto
                       flex flex-col justify-center px-16 py-12 mt-0 "
       >
+        <div className="absolute top-6 inset-x-0 flex justify-center items-center z-50">
+          <div className="flex items-center gap-2">
+            <img
+              src="/SVG/logo1.svg"
+              alt="Mount Dive"
+              className="w-36 sm:w-44 md:w-56 lg:w-64 h-auto"
+            />
+            <img
+              src="/SVG/birds.svg"
+              alt=""
+              className="w-10 sm:w-12 md:w-14 h-auto"
+            />
+          </div>
+        </div>
+
         {/* Toggle for email/phone */}
         <div className="flex justify-center mb-3 z-40">
           <div className="bg-[#4D4D4D] w-full max-w-[360px] h-[45px] rounded-[30px] p-1 flex justify-items-center items-center absolute top-[95px]">
@@ -171,19 +178,27 @@ const AuthPage = () => {
             </motion.div>
           </AnimatePresence>
 
-          <div className="font-syne py-2 text-[10px] gap-[130px] text-[#5300305C]">
-            --------------------------------OR--------------------------------
+          <div className="flex items-center w-full py-2 text-[#5300305C] font-syne text-[10px] sm:text-xs">
+            <span className="flex-grow border-t border-[#5300305C]"></span>
+
+            <span className="px-3 whitespace-nowrap">OR</span>
+
+            <span className="flex-grow border-t border-[#5300305C]"></span>
           </div>
 
           <div className="gap-8 h-[36px] w-full flex justify-center items-center">
             <button>
               <div className="google h-[35px] w-[45px] border border-black rounded-md flex justify-center items-center">
-                <img src="/google.png" className="h-[22px] w-[24px]" alt="" />
+                <img
+                  src="/SVG/google.svg"
+                  className="h-[22px] w-[24px]"
+                  alt=""
+                />
               </div>
             </button>
             <button>
               <div className="apple h-[35px] w-[45px] border flex justify-center items-center border-black rounded-md">
-                <img src="/apple.svg" alt="" />
+                <img src="/SVG/apple.svg" alt="" />
               </div>
             </button>
           </div>
